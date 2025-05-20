@@ -47,8 +47,6 @@ class Assets
         $coreAssetDirs = [
             $rootDir . '/assets/js',
             $rootDir . '/assets/css',
-            $rootDir . '/assets/img',
-            $rootDir . '/assets/fonts',
         ];
         
         // Ensure each directory exists

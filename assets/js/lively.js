@@ -595,7 +595,7 @@ class Lively {
         
         if (el) {
             // Add error class
-            el.classList.add('lively-error');
+            el.classList.add('lively-error', 'lively-error-highlight');
             
             // Find or create error element
             let errorEl = el.querySelector('.lively-error-message');
@@ -608,13 +608,16 @@ class Lively {
             // Set error message
             errorEl.textContent = errorMessage;
             
+            
             // Auto-hide after 5 seconds
+            /*
             setTimeout(() => {
                 el.classList.remove('lively-error');
                 if (errorEl.parentNode) {
                     errorEl.parentNode.removeChild(errorEl);
                 }
             }, 5000);
+            */
         } else {
             this.error(`Error displaying component error: Element with ID ${componentId} not found in DOM`);
         }
