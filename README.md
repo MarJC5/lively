@@ -1,12 +1,13 @@
 # Lively Framework
 
-A modern, flexible PHP framework that can be integrated with WordPress, Laravel, and other PHP applications. Lively Framework provides a robust foundation for building web applications with a focus on security, performance, and maintainability.
+A modern, React-like PHP framework that can be integrated with WordPress, Laravel, and other PHP applications. Lively Framework provides a robust foundation for building interactive web applications with a focus on component-based architecture, security, performance, and maintainability.
 
 ## Table of Contents
 - [Features](#features)
 - [Core Modules](#core-modules)
 - [Component System](#component-system)
 - [Client-Side Integration](#client-side-integration)
+- [CLI Tools](#cli-tools)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -16,11 +17,12 @@ A modern, flexible PHP framework that can be integrated with WordPress, Laravel,
 
 ## Features
 
-- **Modern Architecture**
-  - React-like Component System
-  - Modular Design
-  - Framework Agnostic
-  - Modern PHP Practices
+- **React-like Architecture**
+  - Component-based UI development
+  - Virtual DOM-like updates
+  - State and Props system
+  - Event handling
+  - Lifecycle hooks
   - Clean HTML Output
 
 - **Security**
@@ -46,7 +48,7 @@ A modern, flexible PHP framework that can be integrated with WordPress, Laravel,
 ## Core Modules
 
 ### View Module
-The View module provides a robust component-based system for building dynamic user interfaces:
+The View module provides a React-like component system for building dynamic user interfaces:
 
 ```php
 use Lively\Core\View\Component;
@@ -62,23 +64,27 @@ class MyComponent extends Component {
 }
 ```
 
-### HTTP Module
-Handles routing, middleware, and request/response management:
+### Component Update Module
+Handles component state updates and client-server communication:
 
 ```php
-use Lively\Core\Http\Router;
+use Lively\Core\View\Renderer;
 
-$router = Router::getInstance();
-$router->get('/users', function() {
-    // Handle request
-});
+$renderer = Renderer::getInstance();
+
+// Handle component update
+$renderer->handleComponentUpdate(
+    'component-id',
+    'methodName',
+    ['arg1', 'arg2']
+);
 ```
 
 ### Client-Side Module
 Provides seamless integration between server and client:
 
 ```javascript
-// Update component
+// Update component state
 updateState('component-id', 'methodName', { arg1: 'value1' });
 ```
 
@@ -120,7 +126,7 @@ class Counter extends Component {
 - **Clean HTML**: State stored in separate script tags
 
 ### State Management
-The framework uses a clean approach to state management:
+The framework uses a React-like approach to state management:
 
 1. Component HTML is rendered with minimal attributes
 2. Component state is stored in separate script tags at the end of the body
@@ -167,6 +173,45 @@ updateState('component-id', 'methodName', { arg1: 'value1' });
 lively.showComponentError('component-id', 'Error message');
 ```
 
+## CLI Tools
+
+Lively Framework includes a simple CLI tool for development tasks.
+
+### Available Commands
+
+```bash
+# Create a new component
+php lively make:component ComponentName
+
+# Clear component memory cache
+php lively clear:memory
+```
+
+### Command Structure
+The CLI tool provides a basic command structure with:
+- Command registration
+- Argument handling
+- Colored output for errors, success, and info messages
+
+### Creating Custom Commands
+You can create custom commands by extending the `Command` class:
+
+```php
+namespace Lively\Core\Cli\Commands;
+
+use Lively\Core\Cli\Command;
+
+class MyCommand extends Command {
+    protected string $name = 'my:command';
+    protected string $description = 'Description of my command';
+    
+    public function handle(array $args = []): void {
+        // Your command logic here
+        $this->success('Command executed successfully');
+    }
+}
+```
+
 ## Requirements
 
 - PHP 7.4 or higher
@@ -206,8 +251,7 @@ require_once __DIR__ . '/lively/init.php';
 ```php
 <?php 
 // Output component states
-$renderer = \Lively\Core\View\Renderer::getInstance();
-echo $renderer->generateComponentStates();
+echo \Lively\Lively::componentStates();
 
 wp_footer(); 
 ?>
@@ -292,7 +336,7 @@ echo Lively::render('HelloWorld', ['name' => 'World']);
 
 For detailed documentation, see:
 - [View Module Documentation](docs/view.md)
-- [HTTP Module Documentation](docs/router.md)
+- [Component System Documentation](docs/view.md)
 - [Client-Side Documentation](docs/lively.md)
 
 ## Contributing
