@@ -216,14 +216,16 @@ class Renderer {
             return '';
         }
         
-        $html = null;
+        $html = '<!-- Lively Component States START -->';
         
         foreach ($this->componentStates as $id => $state) {
             $html .= "<script id=\"{$id}\" type=\"application/json\">" . 
                      json_encode($state) . 
                      "</script>\n";
         }
-        
+
+        $html .= '<!-- Lively Component States END -->';
+
         return $html;
     }
     
