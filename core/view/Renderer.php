@@ -27,6 +27,7 @@ class Renderer {
         'warm' => 8,   // Keep medium number of warm components
         'cold' => 3    // Keep fewer cold components
     ];
+    protected $componentStates = []; // Store component states for later output
     
     /**
      * Get singleton instance
@@ -182,24 +183,48 @@ class Renderer {
         
         // Check if the HTML already contains a component attribute
         if (strpos($html, 'lively:component') !== false) {
-            // It already has lively:component attribute, add state and class to it
+            // It already has lively:component attribute, just add the component ID
             $html = str_replace(
                 'lively:component="' . $id . '"',
-                'lively:component="' . $id . '" lively:state=\'' . htmlspecialchars(json_encode($state), ENT_QUOTES, 'UTF-8') . '\' lively:json-class=\'' . htmlspecialchars(json_encode($class), ENT_QUOTES, 'UTF-8') . '\'',
+                'lively:component="' . $id . '"',
                 $html
             );
-            return $html;
+        } else {
+            // Wrap the component HTML with a div that includes component metadata
+            $html = "<div class=\"lively-component\" 
+                        id=\"{$id}\" 
+                        data-component=\"{$class}\" 
+                        lively:component=\"{$id}\">
+                        {$html}
+                    </div>";
         }
         
-        // Wrap the component HTML with a div that includes component metadata
-        return "<div class=\"lively-component\" 
-                    id=\"{$id}\" 
-                    data-component=\"{$class}\" 
-                    lively:component=\"{$id}\"
-                    lively:state='" . htmlspecialchars(json_encode($state), ENT_QUOTES, 'UTF-8') . "'
-                    lively:json-class='" . htmlspecialchars(json_encode($class), ENT_QUOTES, 'UTF-8') . "'>
-                    {$html}
-                </div>";
+        // Store the state data for later output
+        $this->componentStates[$id] = [
+            'value' => $state,
+            'json-class' => $class
+        ];
+        
+        return $html;
+    }
+    
+    /**
+     * Generate all component state script tags
+     */
+    public function generateComponentStates() {
+        if (empty($this->componentStates)) {
+            return '';
+        }
+        
+        $html = null;
+        
+        foreach ($this->componentStates as $id => $state) {
+            $html .= "<script id=\"{$id}\" type=\"application/json\">" . 
+                     json_encode($state) . 
+                     "</script>\n";
+        }
+        
+        return $html;
     }
     
     /**

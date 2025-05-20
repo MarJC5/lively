@@ -7,6 +7,7 @@ The View module provides a robust component-based system for building dynamic us
 - [ComponentFactory](#componentfactory)
 - [Renderer](#renderer)
 - [State](#state)
+- [State Management](#state-management)
 
 ## Component
 
@@ -20,6 +21,7 @@ The `Component` class is the base class for all UI components in the framework.
 - CSRF protection
 - Hydration support
 - Lazy loading
+- Clean HTML output
 
 ### Usage Example
 ```php
@@ -93,6 +95,7 @@ The `Renderer` class manages component rendering and lifecycle.
 - Memory management
 - Tiered caching
 - Component updates
+- State script generation
 
 ### Usage Example
 ```php
@@ -114,6 +117,9 @@ $renderer->handleComponentUpdate(
     'methodName',
     ['arg1', 'arg2']
 );
+
+// Generate state script tags
+$stateScripts = $renderer->generateComponentStates();
 ```
 
 ## State
@@ -151,6 +157,89 @@ $state->setMultiple([
 ], 'namespace');
 ```
 
+## State Management
+
+The framework uses a clean approach to state management, separating component state from HTML markup.
+
+### Key Features
+- Clean HTML output
+- State stored in separate script tags
+- Automatic state loading
+- Seamless updates
+- Better performance
+- Improved maintainability
+
+### Implementation
+
+1. **Component Rendering**
+   ```php
+   public function render()
+   {
+       return <<<HTML
+       <div class="counter-component" lively:component="{$this->getId()}">
+           <h3>Count: {$this->getState('count')}</h3>
+           <button lively:onclick="increment">Increment</button>
+       </div>
+       HTML;
+   }
+   ```
+
+2. **State Storage**
+   ```html
+   <!-- Component HTML -->
+   <div class="counter-component" lively:component="counter-123">
+       <h3>Count: 5</h3>
+       <button lively:onclick="increment">Increment</button>
+   </div>
+
+   <!-- State (at end of body) -->
+   <script id="counter-123" type="application/json">
+   {
+       "value": 5,
+       "json-class": "Lively\\Resources\\Components\\Counter"
+   }
+   </script>
+   ```
+
+3. **State Output**
+   ```php
+   // In footer.php or before </body>
+   $renderer = \Lively\Core\View\Renderer::getInstance();
+   echo $renderer->generateComponentStates();
+
+   // OR
+
+   echo \Lively\Lively::componentStates();
+   ```
+
+
+
+### Benefits
+
+1. **Clean HTML**
+   - Components have minimal attributes
+   - No state data in HTML
+   - Better readability
+   - Easier debugging
+
+2. **Performance**
+   - Reduced HTML size
+   - Faster initial load
+   - Better caching
+   - Optimized updates
+
+3. **Maintainability**
+   - Clear separation of concerns
+   - Easier to modify state
+   - Better code organization
+   - Simplified debugging
+
+4. **Security**
+   - State data isolated
+   - Better XSS protection
+   - Cleaner output
+   - Easier to sanitize
+
 ## Best Practices
 
 1. **Component Design**
@@ -158,24 +247,28 @@ $state->setMultiple([
    - Use props for configuration
    - Use state for internal data
    - Implement proper lifecycle methods
+   - Keep HTML clean and minimal
 
 2. **State Management**
    - Use namespaces to organize state
    - Implement proper state dependencies
    - Use batch notifications for multiple updates
    - Clean up listeners when components are destroyed
+   - Keep state data separate from HTML
 
 3. **Performance**
    - Use component pooling for frequently used components
    - Implement lazy loading for heavy components
    - Use tiered caching for optimal memory usage
    - Clean up unused components
+   - Minimize HTML size
 
 4. **Security**
    - Always validate component inputs
    - Use CSRF protection for component updates
    - Sanitize component output
    - Validate component class names
+   - Keep state data isolated
 
 ## Component Lifecycle
 
@@ -189,16 +282,19 @@ $state->setMultiple([
    - `beforeMount()` is called
    - Component is rendered
    - `mounted()` is called
+   - State script is generated
 
 3. **Updates**
    - State changes trigger re-renders
    - Props changes trigger re-renders
    - Child components are updated
+   - State scripts are updated
 
 4. **Unmounting**
    - `unmount()` is called
    - Resources are cleaned up
    - Component is unregistered
+   - State scripts are removed
 
 ## Error Handling
 

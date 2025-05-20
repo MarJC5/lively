@@ -241,10 +241,28 @@ class Lively {
         // Query for elements with lively:component attribute
         document.querySelectorAll('[lively\\:component]').forEach(el => {
             const id = el.getAttribute('lively:component');
-            const stateJson = el.getAttribute('lively:state');
             
-            // Get class name using our helper function
-            let className = this.getClassNameFromElement(el);
+            // Look for state in script tag at the bottom of body
+            let stateJson = null;
+            let className = null;
+            
+            // Try to find state in script tag at the bottom of body
+            const stateScript = document.querySelector(`body > script[id="${id}"][type="application/json"]`);
+            if (stateScript) {
+                try {
+                    const stateData = JSON.parse(stateScript.textContent);
+                    stateJson = JSON.stringify(stateData.value);
+                    className = stateData['json-class'];
+                } catch (e) {
+                    this.error(`Error parsing component state from script tag: ${id}`, e);
+                }
+            }
+            
+            // Fallback to attributes if script tag not found
+            if (!stateJson) {
+                stateJson = el.getAttribute('lively:state');
+                className = this.getClassNameFromElement(el);
+            }
             
             // If no class name found, try to infer it from the component ID
             if (!className && id && id.includes('-')) {
@@ -668,25 +686,20 @@ class Lively {
             // Update the inner HTML
             el.innerHTML = html;
             
-            // Update the state attribute
-            el.setAttribute('lively:state', JSON.stringify(component.state));
-            
-            // Preserve existing class name if needed
-            if (existingClassName && !component.class) {
-                // Save as JSON-encoded class to ensure proper escaping
-                el.setAttribute('lively:json-class', JSON.stringify(existingClassName));
-                this.log(`Restored class attribute as JSON: ${existingClassName}`);
-                
-                // Also update our in-memory registry
-                if (this.components[component.id]) {
-                    this.components[component.id].class = existingClassName;
-                }
-            } 
-            // Otherwise update with the new class name if available
-            else if (component.class) {
-                // Store as JSON to ensure proper escaping
-                el.setAttribute('lively:json-class', JSON.stringify(component.class));
+            // Update or create the state script tag at the bottom of body
+            let stateScript = document.querySelector(`body > script[id="${component.id}"][type="application/json"]`);
+            if (!stateScript) {
+                stateScript = document.createElement('script');
+                stateScript.id = component.id;
+                stateScript.type = 'application/json';
+                document.body.appendChild(stateScript);
             }
+            
+            // Update the state and class in the script tag
+            stateScript.textContent = JSON.stringify({
+                value: component.state,
+                'json-class': component.class || existingClassName
+            });
             
             // Restore any other data attributes
             Object.entries(attributes).forEach(([name, value]) => {

@@ -74,4 +74,9 @@ class Lively {
         
         return $html;
     }
+
+    public static function componentStates() {
+        $renderer = Renderer::getInstance();
+        return $renderer->generateComponentStates();
+    }
 }

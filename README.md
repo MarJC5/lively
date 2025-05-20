@@ -21,6 +21,7 @@ A modern, flexible PHP framework that can be integrated with WordPress, Laravel,
   - Modular Design
   - Framework Agnostic
   - Modern PHP Practices
+  - Clean HTML Output
 
 - **Security**
   - CSRF Protection
@@ -33,12 +34,14 @@ A modern, flexible PHP framework that can be integrated with WordPress, Laravel,
   - Lazy Loading
   - Tiered Caching
   - Memory Management
+  - Optimized State Management
 
 - **Developer Experience**
   - Intuitive API
   - Comprehensive Documentation
   - Debug Tools
   - Error Handling
+  - Clean HTML Structure
 
 ## Core Modules
 
@@ -114,6 +117,32 @@ class Counter extends Component {
 - **Lifecycle Hooks**: Control component behavior
 - **Child Components**: Build complex UIs
 - **CSRF Protection**: Secure component updates
+- **Clean HTML**: State stored in separate script tags
+
+### State Management
+The framework uses a clean approach to state management:
+
+1. Component HTML is rendered with minimal attributes
+2. Component state is stored in separate script tags at the end of the body
+3. JavaScript automatically loads and manages component state
+4. Updates are handled seamlessly through the framework
+
+Example output:
+```html
+<!-- Component HTML -->
+<div class="counter-component" lively:component="counter-123">
+    <h3>Count: 5</h3>
+    <button lively:onclick="increment">Increment</button>
+</div>
+
+<!-- State (at end of body) -->
+<script id="counter-123" type="application/json">
+{
+    "value": 5,
+    "json-class": "Lively\\Resources\\Components\\Counter"
+}
+</script>
+```
 
 ## Client-Side Integration
 
@@ -173,6 +202,19 @@ require_once __DIR__ . '/lively/init.php';
 <?php echo \Lively\Lively::assets(); ?>
 ```
 
+4. Add component states output to your theme's `footer.php`:
+```php
+<?php 
+// Output component states
+$renderer = \Lively\Core\View\Renderer::getInstance();
+echo $renderer->generateComponentStates();
+
+wp_footer(); 
+?>
+</body>
+</html>
+```
+
 ### Other PHP Projects
 
 1. Copy the `lively` directory to your project:
@@ -204,6 +246,11 @@ require_once __DIR__ . '/lively/init.php';
 </head>
 <body>
     <!-- Your content here -->
+    
+    <?php 
+    // Output component states
+    echo \Lively\Lively::componentStates();
+    ?>
 </body>
 </html>
 ```
