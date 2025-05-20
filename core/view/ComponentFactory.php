@@ -214,11 +214,20 @@ class ComponentFactory
                                 $namespace .= $namespacePath . '\\';
                             }
                             
-                            $allowedClasses[] = $namespace . $className;
+                            $fullClassName = $namespace . $className;
+                            
+                            // Only add if the class exists and extends Component
+                            if (class_exists($fullClassName) && is_subclass_of($fullClassName, 'Lively\\Core\\View\\Component')) {
+                                $allowedClasses[] = $fullClassName;
+                                Logger::debug("Added allowed component class: $fullClassName");
+                            }
                         }
                     }
                 }
             }
+            
+            // Add base component classes
+            $allowedClasses[] = 'Lively\\Core\\View\\Component';
             
             // Add any explicitly allowed component classes here
             $explicitlyAllowed = [
@@ -317,7 +326,7 @@ class ComponentFactory
                 }
                 
                 $fullClassName = $namespace . $baseName;
-                if (class_exists($fullClassName)) {
+                if (class_exists($fullClassName) && is_subclass_of($fullClassName, 'Lively\\Core\\View\\Component')) {
                     return $fullClassName;
                 }
             }
@@ -327,7 +336,7 @@ class ComponentFactory
         // Try to add namespace
         foreach ($this->allowedNamespaces as $namespace) {
             $fullClassName = $namespace . $className;
-            if (class_exists($fullClassName)) {
+            if (class_exists($fullClassName) && is_subclass_of($fullClassName, 'Lively\\Core\\View\\Component')) {
                 return $fullClassName;
             }
         }
@@ -336,8 +345,43 @@ class ComponentFactory
         $pascalCaseName = ucfirst($className);
         foreach ($this->allowedNamespaces as $namespace) {
             $fullClassName = $namespace . $pascalCaseName;
-            if (class_exists($fullClassName)) {
+            if (class_exists($fullClassName) && is_subclass_of($fullClassName, 'Lively\\Core\\View\\Component')) {
                 return $fullClassName;
+            }
+        }
+
+        // Try to find in component directories
+        $componentDirs = [
+            LIVELY_RESOURCES_DIR . '/components',
+        ];
+        
+        foreach ($componentDirs as $dir) {
+            if (is_dir($dir)) {
+                // Recursively scan for PHP files
+                $files = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($dir)
+                );
+                
+                foreach ($files as $file) {
+                    if ($file->isFile() && $file->getExtension() === 'php') {
+                        $relativePath = str_replace($dir . '/', '', $file->getPathname());
+                        $namespacePath = str_replace('/', '\\', dirname($relativePath));
+                        $fileClassName = basename($file->getPathname(), '.php');
+                        
+                        // If the component name matches the file name
+                        if ($fileClassName === $className || $fileClassName === $pascalCaseName) {
+                            $fullNamespace = 'Lively\\Resources\\Components\\';
+                            if ($namespacePath !== '.') {
+                                $fullNamespace .= $namespacePath . '\\';
+                            }
+                            
+                            $fullClassName = $fullNamespace . $fileClassName;
+                            if (class_exists($fullClassName) && is_subclass_of($fullClassName, 'Lively\\Core\\View\\Component')) {
+                                return $fullClassName;
+                            }
+                        }
+                    }
+                }
             }
         }
 

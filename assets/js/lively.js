@@ -341,6 +341,23 @@ class Lively {
             }
         }
         
+        // Try to find state in script tag at the bottom of body
+        const componentId = el.getAttribute('lively:component');
+        if (componentId) {
+            const stateScript = document.querySelector(`body > script[id="${componentId}"][type="application/json"]`);
+            if (stateScript) {
+                try {
+                    const stateData = JSON.parse(stateScript.textContent);
+                    if (stateData['json-class']) {
+                        this.log(`Found class name in state script: ${stateData['json-class']}`);
+                        return stateData['json-class'];
+                    }
+                } catch (e) {
+                    this.error('Error parsing state script:', e);
+                }
+            }
+        }
+        
         // Fall back to the regular class attribute
         const rawClassName = el.getAttribute('lively:class');
         if (rawClassName) {
@@ -356,7 +373,6 @@ class Lively {
         }
         
         // Try to infer from component ID
-        const componentId = el.getAttribute('lively:component');
         if (componentId && componentId.includes('-')) {
             // Extract component type from ID (e.g., "my-component" from "my-component-f3515237")
             const componentType = componentId.split('-').slice(0, -1).join('-'); // Get all parts except the hash
@@ -507,7 +523,7 @@ class Lively {
         // Make a copy of the component data to avoid modifying the original
         const componentData = JSON.parse(JSON.stringify(this.components[componentId]));
         
-        // Ensure we have the full class name from the DOM if available
+        // Always use the class name from the DOM if available, as it's the most accurate
         const domClassName = this.getClassNameFromElement(el);
         if (domClassName) {
             componentData.class = domClassName;
