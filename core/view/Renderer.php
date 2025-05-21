@@ -225,7 +225,10 @@ class Renderer {
         }
 
         $html .= '<!-- Lively Component States END -->';
-
+        
+        // Clear the states after generating the output
+        $this->clearComponentStates();
+        
         return $html;
     }
     
@@ -528,6 +531,26 @@ class Renderer {
     }
     
     /**
+     * Clear component states from memory
+     * 
+     * @param string|null $componentId Optional specific component ID to clear
+     * @return int Number of states cleared
+     */
+    public function clearComponentStates($componentId = null) {
+        if ($componentId !== null) {
+            if (isset($this->componentStates[$componentId])) {
+                unset($this->componentStates[$componentId]);
+                return 1;
+            }
+            return 0;
+        }
+        
+        $count = count($this->componentStates);
+        $this->componentStates = [];
+        return $count;
+    }
+    
+    /**
      * Clean up unused components
      * 
      * @param int $maxAge Maximum age in seconds before a component is considered stale
@@ -548,6 +571,8 @@ class Renderer {
                     
                     // Remove the component
                     unset($this->components[$id]);
+                    // Also clear its state
+                    $this->clearComponentStates($id);
                     Logger::debug("Removed stale component: $id");
                     $count++;
                 }
@@ -562,343 +587,6 @@ class Renderer {
         }
         
         return $count;
-    }
-    
-    /**
-     * Get or create a component from pool
-     * 
-     * @param string $className The component class name
-     * @param array $props Component props
-     * @return Component The component instance (either new or from pool)
-     */
-    public function getPooledComponent($className, $props = []) {
-        $poolKey = $className;
-        $now = time();
-        
-        // Track pool sizes for logging
-        $initialPoolSize = isset($this->componentPooling[$poolKey]) ? count($this->componentPooling[$poolKey]) : 0;
-        
-        // Check if we have any components of this type in the pool
-        if (!empty($this->componentPooling[$poolKey])) {
-            // First, clean up any stale pooled components
-            $this->cleanupPooledComponents($poolKey);
-            
-            // If we still have components after cleanup, use one
-            if (!empty($this->componentPooling[$poolKey])) {
-                // Get a component from the pool
-                $component = array_pop($this->componentPooling[$poolKey]);
-                $componentId = $component->getId();
-                
-                // Restore usage metrics if they exist
-                if (isset($this->componentUsageCount[$componentId])) {
-                    // Increment usage count for the reused component
-                    $this->componentUsageCount[$componentId]++;
-                    $this->updateComponentTier($componentId);
-                } else {
-                    // Initialize usage metrics for new component
-                    $this->componentUsageCount[$componentId] = 1;
-                    $this->componentTier[$componentId] = 'cold';
-                }
-                
-                // Reset the component with new props
-                if (method_exists($component, 'reset')) {
-                    $component->reset($props);
-                }
-                
-                // Update pool stats
-                $poolSizeAfter = count($this->componentPooling[$poolKey]);
-                $tier = $this->componentTier[$componentId] ?? 'cold';
-                
-                Logger::debug("Reused component from pool", [
-                    'class' => get_class($component),
-                    'tier' => $tier,
-                    'usage_count' => $this->componentUsageCount[$componentId],
-                    'initial_pool_size' => $initialPoolSize,
-                    'pool_size_after' => $poolSizeAfter
-                ]);
-                
-                return $component;
-            }
-        }
-        
-        // No pooled component available, create a new one
-        $component = $this->componentFactory->create($className, $props);
-        
-        // Initialize usage metrics for new component
-        $componentId = $component->getId();
-        $this->componentUsageCount[$componentId] = 1;
-        $this->componentTier[$componentId] = 'cold';
-        
-        return $component;
-    }
-    
-    /**
-     * Return a component to the pool for reuse
-     * 
-     * @param Component $component The component to return to the pool
-     * @param int|null $maxPoolSize Maximum number of components to keep in the pool per type
-     * @return bool Whether the component was added to the pool
-     */
-    public function returnToPool($component, $maxPoolSize = null) {
-        // Get component ID and class
-        $id = $component->getId();
-        $className = get_class($component);
-        $poolKey = $className;
-        $now = time();
-        
-        // Determine component tier
-        $tier = $this->componentTier[$id] ?? 'cold';
-        
-        // Use tier-based pool size if no specific size provided
-        if ($maxPoolSize === null) {
-            $maxPoolSize = $this->tierPoolSizes[$tier] ?? $this->maxPoolSizePerType;
-        }
-        
-        // Calculate total pool size across all types
-        $totalPoolSize = 0;
-        foreach ($this->componentPooling as $type => $components) {
-            $totalPoolSize += count($components);
-        }
-        
-        // Check if the total pool size is already at or above the maximum
-        if ($totalPoolSize >= $this->maxTotalPoolSize) {
-            // Pool is full across all types
-            // For hot/warm components, try to make room by removing cold components first
-            if ($tier === 'hot' || $tier === 'warm') {
-                $this->cleanupTieredPooledComponents('cold');
-                
-                // If still not enough room for hot components, try to remove warm ones too
-                if ($tier === 'hot' && $totalPoolSize >= $this->maxTotalPoolSize) {
-                    $this->cleanupTieredPooledComponents('warm');
-                }
-                
-                // Recalculate total pool size after cleanup
-                $totalPoolSize = 0;
-                foreach ($this->componentPooling as $type => $components) {
-                    $totalPoolSize += count($components);
-                }
-            } else {
-                // For cold components, just remove oldest components
-                $this->cleanupOldestPooledComponents();
-                
-                // Recalculate total pool size after cleanup
-                $totalPoolSize = 0;
-                foreach ($this->componentPooling as $type => $components) {
-                    $totalPoolSize += count($components);
-                }
-            }
-            
-            // If we're still at max capacity, destroy this component
-            if ($totalPoolSize >= $this->maxTotalPoolSize) {
-                // Pool is still full, destroy the component
-                if (method_exists($component, 'destroy')) {
-                    $component->destroy();
-                }
-                
-                Logger::debug("Component not returned to pool (global pool limit reached)", [
-                    'class' => $className,
-                    'tier' => $tier,
-                    'total_pool_size' => $totalPoolSize
-                ]);
-                
-                return false;
-            }
-        }
-        
-        // Initialize pool for this component type if it doesn't exist
-        if (!isset($this->componentPooling[$poolKey])) {
-            $this->componentPooling[$poolKey] = [];
-            $this->componentPoolLastUsed[$poolKey] = [];
-        }
-        
-        // Only add to pool if we haven't reached the max size for this type
-        if (count($this->componentPooling[$poolKey]) < $maxPoolSize) {
-            // First clean up any stale components in this pool
-            $this->cleanupPooledComponents($poolKey);
-            
-            // Check again after cleanup
-            if (count($this->componentPooling[$poolKey]) < $maxPoolSize) {
-                // Clear the component state
-                if (method_exists($component, 'clearState')) {
-                    $component->clearState();
-                }
-                
-                // Add to pool and track last use time
-                $this->componentPooling[$poolKey][] = $component;
-                $this->componentPoolLastUsed[$poolKey][$id] = $now;
-                
-                Logger::debug("Component returned to pool", [
-                    'class' => $className,
-                    'tier' => $tier,
-                    'pool_size' => count($this->componentPooling[$poolKey]),
-                    'total_pool_size' => $totalPoolSize + 1
-                ]);
-                
-                // Remove from active components but preserve usage metrics
-                unset($this->components[$id]);
-                unset($this->componentLastAccess[$id]);
-                
-                return true;
-            }
-        }
-        
-        // Pool is full for this type, destroy the component
-        if (method_exists($component, 'destroy')) {
-            $component->destroy();
-        }
-        
-        Logger::debug("Component not returned to pool (type limit reached)", [
-            'class' => $className,
-            'tier' => $tier,
-            'pool_size' => count($this->componentPooling[$poolKey] ?? [])
-        ]);
-        
-        return false;
-    }
-    
-    /**
-     * Clean up stale components in a specific pool
-     * 
-     * @param string $poolKey The pool key to clean
-     * @return int Number of components removed
-     */
-    protected function cleanupPooledComponents($poolKey) {
-        $now = time();
-        $count = 0;
-        
-        // Skip if pool doesn't exist
-        if (!isset($this->componentPooling[$poolKey]) || empty($this->componentPooling[$poolKey])) {
-            return 0;
-        }
-        
-        // Loop through components in the pool
-        foreach ($this->componentPooling[$poolKey] as $index => $component) {
-            $componentId = $component->getId();
-            
-            // Check if component is too old
-            if (!isset($this->componentPoolLastUsed[$poolKey][$componentId]) || 
-                ($now - $this->componentPoolLastUsed[$poolKey][$componentId]) > $this->componentPoolMaxAge) {
-                
-                // Destroy the component
-                if (method_exists($component, 'destroy')) {
-                    $component->destroy();
-                }
-                
-                // Remove from pool
-                unset($this->componentPooling[$poolKey][$index]);
-                if (isset($this->componentPoolLastUsed[$poolKey][$componentId])) {
-                    unset($this->componentPoolLastUsed[$poolKey][$componentId]);
-                }
-                
-                $count++;
-            }
-        }
-        
-        // Re-index arrays
-        if ($count > 0) {
-            $this->componentPooling[$poolKey] = array_values($this->componentPooling[$poolKey]);
-            
-            Logger::debug("Cleaned up stale components from pool", [
-                'pool_key' => $poolKey,
-                'removed' => $count,
-                'remaining' => count($this->componentPooling[$poolKey])
-            ]);
-        }
-        
-        return $count;
-    }
-    
-    /**
-     * Clean up the oldest components from all pools to make room
-     * 
-     * @param int $count Number of components to remove
-     * @return int Number of components actually removed
-     */
-    protected function cleanupOldestPooledComponents($count = 5) {
-        // Build a list of all components with their last use time
-        $allPooledComponents = [];
-        
-        foreach ($this->componentPooling as $poolKey => $components) {
-            foreach ($components as $index => $component) {
-                $componentId = $component->getId();
-                $lastUsed = $this->componentPoolLastUsed[$poolKey][$componentId] ?? 0;
-                
-                $allPooledComponents[] = [
-                    'pool_key' => $poolKey,
-                    'index' => $index,
-                    'component' => $component,
-                    'component_id' => $componentId,
-                    'last_used' => $lastUsed
-                ];
-            }
-        }
-        
-        // Sort by last used time (oldest first)
-        usort($allPooledComponents, function($a, $b) {
-            return $a['last_used'] - $b['last_used'];
-        });
-        
-        // Take the oldest ones up to $count
-        $toRemove = array_slice($allPooledComponents, 0, $count);
-        $removed = 0;
-        
-        // Remove them from their pools
-        foreach ($toRemove as $item) {
-            $poolKey = $item['pool_key'];
-            $index = $item['index'];
-            $component = $item['component'];
-            $componentId = $item['component_id'];
-            
-            // Destroy the component
-            if (method_exists($component, 'destroy')) {
-                $component->destroy();
-            }
-            
-            // Remove from pool
-            if (isset($this->componentPooling[$poolKey][$index])) {
-                unset($this->componentPooling[$poolKey][$index]);
-                $removed++;
-            }
-            
-            if (isset($this->componentPoolLastUsed[$poolKey][$componentId])) {
-                unset($this->componentPoolLastUsed[$poolKey][$componentId]);
-            }
-        }
-        
-        // Re-index the arrays
-        foreach ($this->componentPooling as $poolKey => $components) {
-            if (empty($components)) {
-                unset($this->componentPooling[$poolKey]);
-                unset($this->componentPoolLastUsed[$poolKey]);
-            } else {
-                $this->componentPooling[$poolKey] = array_values($components);
-            }
-        }
-        
-        if ($removed > 0) {
-            Logger::debug("Cleaned up oldest components from pools", [
-                'removed' => $removed,
-                'requested' => $count
-            ]);
-        }
-        
-        return $removed;
-    }
-    
-    /**
-     * Configure pool sizes and aging
-     * 
-     * @param int $maxPerType Maximum components per type
-     * @param int $maxTotal Maximum total components across all types
-     * @param int $maxAge Maximum age in seconds for pooled components
-     * @return $this
-     */
-    public function configureComponentPooling($maxPerType = 10, $maxTotal = 100, $maxAge = 1800) {
-        $this->maxPoolSizePerType = max(1, $maxPerType);
-        $this->maxTotalPoolSize = max($this->maxPoolSizePerType, $maxTotal);
-        $this->componentPoolMaxAge = max(60, $maxAge); // Minimum 1 minute
-        
-        return $this;
     }
     
     /**
@@ -921,6 +609,14 @@ class Renderer {
             
             // Perform cleanup
             $removed = $this->cleanupComponents(1800); // Use a shorter timeout when memory is high
+            
+            // If still high memory usage, clear all component states
+            if ($removed === 0 && $usageRatio > $threshold) {
+                $statesCleared = $this->clearComponentStates();
+                if ($statesCleared > 0) {
+                    Logger::info("Cleared $statesCleared component states due to high memory usage");
+                }
+            }
             
             // Return whether cleanup was performed
             return $removed > 0;
@@ -1001,89 +697,19 @@ class Renderer {
     }
     
     /**
-     * Cleanup components of a specific tier from pools
+     * Configure pool sizes and aging
      * 
-     * @param string $targetTier Tier to clean up ('hot', 'warm', or 'cold')
-     * @param int $count Maximum number of components to remove
-     * @return int Number of components removed
+     * @param int $maxPerType Maximum components per type
+     * @param int $maxTotal Maximum total components across all types
+     * @param int $maxAge Maximum age in seconds for pooled components
+     * @return $this
      */
-    protected function cleanupTieredPooledComponents($targetTier, $count = 5) {
-        // Build a list of components of the target tier
-        $tieredComponents = [];
+    public function configureComponentPooling($maxPerType = 10, $maxTotal = 100, $maxAge = 1800) {
+        $this->maxPoolSizePerType = max(1, $maxPerType);
+        $this->maxTotalPoolSize = max($this->maxPoolSizePerType, $maxTotal);
+        $this->componentPoolMaxAge = max(60, $maxAge); // Minimum 1 minute
         
-        foreach ($this->componentPooling as $poolKey => $components) {
-            foreach ($components as $index => $component) {
-                $componentId = $component->getId();
-                $tier = $this->componentTier[$componentId] ?? 'cold';
-                $lastUsed = $this->componentPoolLastUsed[$poolKey][$componentId] ?? 0;
-                
-                if ($tier === $targetTier) {
-                    $tieredComponents[] = [
-                        'pool_key' => $poolKey,
-                        'index' => $index,
-                        'component' => $component,
-                        'component_id' => $componentId,
-                        'last_used' => $lastUsed
-                    ];
-                }
-            }
-        }
-        
-        // If no components of this tier found, return
-        if (empty($tieredComponents)) {
-            return 0;
-        }
-        
-        // Sort by last used time (oldest first)
-        usort($tieredComponents, function($a, $b) {
-            return $a['last_used'] - $b['last_used'];
-        });
-        
-        // Take the oldest ones up to $count
-        $toRemove = array_slice($tieredComponents, 0, $count);
-        $removed = 0;
-        
-        // Remove them from their pools
-        foreach ($toRemove as $item) {
-            $poolKey = $item['pool_key'];
-            $index = $item['index'];
-            $component = $item['component'];
-            $componentId = $item['component_id'];
-            
-            // Destroy the component
-            if (method_exists($component, 'destroy')) {
-                $component->destroy();
-            }
-            
-            // Remove from pool
-            if (isset($this->componentPooling[$poolKey][$index])) {
-                unset($this->componentPooling[$poolKey][$index]);
-                $removed++;
-            }
-            
-            if (isset($this->componentPoolLastUsed[$poolKey][$componentId])) {
-                unset($this->componentPoolLastUsed[$poolKey][$componentId]);
-            }
-        }
-        
-        // Re-index the arrays
-        foreach ($this->componentPooling as $poolKey => $components) {
-            if (empty($components)) {
-                unset($this->componentPooling[$poolKey]);
-                unset($this->componentPoolLastUsed[$poolKey]);
-            } else {
-                $this->componentPooling[$poolKey] = array_values($components);
-            }
-        }
-        
-        if ($removed > 0) {
-            Logger::debug("Cleaned up $targetTier tier components from pools", [
-                'removed' => $removed,
-                'requested' => $count
-            ]);
-        }
-        
-        return $removed;
+        return $this;
     }
     
     /**
