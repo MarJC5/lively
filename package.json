@@ -1,0 +1,21 @@
+{
+    "name": "sigeasy",
+    "version": "1.0.0",
+    "scripts": {
+      "dev": "vite",
+      "watch": "vite build --watch",
+      "build": "vite build"
+    },
+    "keywords": [
+      "email",
+      "signature"
+    ],
+    "author": "Martin IS IT Services",
+    "license": "ISC",
+    "description": "Lively is an easy email signature builder.",
+    "devDependencies": {
+      "sass": "^1.86.0",
+      "vite": "^6.2.2"
+    }
+  }
+  

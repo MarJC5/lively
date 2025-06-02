@@ -1,0 +1,23 @@
+{
+  "_hooks.js": {
+    "file": "assets/js/hooks.js",
+    "name": "hooks"
+  },
+  "_lib.js": {
+    "file": "assets/js/lib.js",
+    "name": "lib"
+  },
+  "src/js/main.js": {
+    "file": "assets/main.js",
+    "name": "main",
+    "src": "src/js/main.js",
+    "isEntry": true,
+    "imports": [
+      "_lib.js",
+      "_hooks.js"
+    ],
+    "css": [
+      "assets/css/main.css"
+    ]
+  }
+}
