@@ -1,0 +1,78 @@
+// Variables
+$colors: (
+  error: (
+    color: rgba(237, 38, 85, 1),
+    background: rgba(237, 38, 85, 0.2),
+    text: #fff
+  ),
+  warn: (
+    color: rgba(241, 60, 0, 1),
+    background: rgba(241, 60, 0, 0.2),
+    text: #fff
+  ),
+  success: (
+    color: rgba(44, 187, 15, 1),
+    background: rgba(44, 187, 15, 0.2),
+    text: #fff
+  ),
+  info: (
+    color: rgba(0, 114, 171, 1),
+    background: rgba(0, 114, 171, 0.2),
+    text: #fff
+  )
+);
+
+:root {
+  @each $type, $values in $colors {
+    --lively-#{$type}-color: #{map-get($values, color)};
+    --lively-#{$type}-background-color: #{map-get($values, background)};
+    --lively-#{$type}-text-color: #{map-get($values, text)};
+  }
+  
+  --lively-space: 4px;
+}
+
+.lively {
+  &-loading {
+    position: relative;
+    pointer-events: none;
+  }
+
+  &-error {
+    position: relative;
+    transition: all 0.3s ease-in-out;
+
+    &-highlight {
+      position: relative;
+      padding: var(--lively-space);
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--lively-error-background-color);
+        border: 1px dashed var(--lively-error-color);
+      }
+    }
+
+    &-message {
+      position: fixed;
+      bottom: var(--lively-space);
+      left: var(--lively-space);
+      right: var(--lively-space);
+      background-color: var(--lively-error-color);
+      color: var(--lively-error-text-color);
+      padding: var(--lively-space);
+      text-align: center;
+      z-index: 1000;
+    }
+  }
+}
+
+
+

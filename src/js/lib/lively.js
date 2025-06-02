@@ -1,4 +1,3 @@
-// Lively Framework Client-side JavaScript
 class Lively {
     constructor(config = {}) {
         // Store component state
