@@ -71,3 +71,4 @@ phpunit.xml.dist
 
 # Lively specific
 /dist/assets
+/dist/manifest.json
