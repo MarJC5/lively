@@ -7,7 +7,7 @@ get_header()
 ?>
 
 <div class="container">
-    <?php lively('Counter', ['initialValue' => 10, 'label' => 'Counter']); ?>
+    <?php lively('Image', ['media' => 6]); ?>
 </div>
 
 <?php get_footer() ?>

@@ -60,6 +60,29 @@ class Environment {
     /** @var array Runtime configuration */
     private static $config = [];
     
+    /** @var array Default environment variables */
+    private static $defaultEnvVars = [
+        'LIVELY_ENV' => 'production',
+        'SESSION_LIFETIME' => 1800,
+        'SESSION_SECURE' => true,
+        'DISPLAY_ERRORS' => false,
+        'DEBUG_MODE' => false
+    ];
+    
+    /**
+     * Set default environment variables if they don't exist
+     * 
+     * @return void
+     */
+    private static function setDefaultEnvVars() {
+        foreach (self::$defaultEnvVars as $key => $value) {
+            if (getenv($key) === false) {
+                putenv("$key=$value");
+                $_ENV[$key] = $value;
+            }
+        }
+    }
+    
     /**
      * Initialize environment based on .env file and environment variables
      * 
@@ -69,6 +92,9 @@ class Environment {
         // Load environment variables from .env file if it exists
         if (file_exists(LIVELY_THEME_DIR . '/.env')) {
             DotEnv::load(LIVELY_THEME_DIR . '/.env');
+        } else {
+            // Set default environment variables if .env doesn't exist
+            self::setDefaultEnvVars();
         }
         
         // Determine environment
