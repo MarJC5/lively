@@ -1,9 +1,9 @@
 <?php
 
-namespace Lively\Core\Cli\Commands;
+namespace Lively\Cli\Commands;
 
-use Lively\Core\Cli\Command;
-use Lively\Core\Cli\CommandInterface;
+use Lively\Cli\Command;
+use Lively\Cli\CommandInterface;
 
 class MakeComposantCommand extends Command implements CommandInterface
 {
@@ -21,7 +21,7 @@ class MakeComposantCommand extends Command implements CommandInterface
         $resourceFolder = $args[1] ?? null;
 
         // Create component directory if it doesn't exist
-        $componentPath = \Lively\Core\Cli\Cli::getInstance()->getResourcePath() . "/components";
+        $componentPath = \Lively\Cli\Cli::getInstance()->getResourcePath() . "/components";
         if ($resourceFolder) {
             $componentPath .= "/{$resourceFolder}";
             if (!is_dir($componentPath)) {
@@ -82,7 +82,6 @@ if (basename(\$_SERVER['SCRIPT_FILENAME'] ?? '') == basename(__FILE__)) {
     return new {$name}();
 }
 PHP;
-
         file_put_contents("{$path}/{$name}.php", $componentContent);
     }
 } 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Lively\Core\Cli;
+namespace Lively\Cli;
 
 abstract class Command
 {

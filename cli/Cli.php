@@ -1,6 +1,6 @@
 <?php
 
-namespace Lively\Core\Cli;
+namespace Lively\Cli;
 
 class Cli
 {
@@ -14,7 +14,7 @@ class Cli
     public function __construct()
     {
         // Get theme root directory (one level up from lively directory)
-        $this->themeRoot = dirname(dirname(dirname(__DIR__)));
+        $this->themeRoot = dirname(__DIR__);
     }
 
     /**
@@ -61,7 +61,7 @@ class Cli
      */
     public function getResourcePath(): string
     {
-        return $this->themeRoot . '/resources';
+        return $this->themeRoot . '/dist/resources';
     }
 
     /**

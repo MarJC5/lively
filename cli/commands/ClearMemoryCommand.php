@@ -1,8 +1,8 @@
 <?php
 
-namespace Lively\Core\Cli\Commands;
+namespace Lively\Cli\Commands;
 
-use Lively\Core\Cli\Command;
+use Lively\Cli\Command;
 use Lively\Core\View\Renderer;
 
 class ClearMemoryCommand extends Command

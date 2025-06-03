@@ -1,3 +1,5 @@
+@use "sass:map";
+
 // Variables
 $colors: (
   error: (
@@ -24,9 +26,9 @@ $colors: (
 
 :root {
   @each $type, $values in $colors {
-    --lively-#{$type}-color: #{map-get($values, color)};
-    --lively-#{$type}-background-color: #{map-get($values, background)};
-    --lively-#{$type}-text-color: #{map-get($values, text)};
+    --lively-#{$type}-color: #{map.get($values, color)};
+    --lively-#{$type}-background-color: #{map.get($values, background)};
+    --lively-#{$type}-text-color: #{map.get($values, text)};
   }
   
   --lively-space: 4px;
