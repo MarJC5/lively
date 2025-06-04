@@ -70,8 +70,8 @@ class Logger {
                 if (isset($loggingConfig['file_path']) && $loggingConfig['file_path'] !== null) {
                     $this->logFile = $loggingConfig['file_path'];
                 } else {
-                    // Use logs directory instead of root directory
-                    $logsDir = defined('LIVELY_THEME_DIR') ? LIVELY_THEME_DIR . '/logs' : '';
+                    // Use logs directory instead of root directory (one level up)
+                    $logsDir = defined('LIVELY_THEME_DIR') ? LIVELY_THEME_DIR . '/../logs' : '';
                     
                     // Create logs directory if it doesn't exist
                     if (!is_dir($logsDir)) {

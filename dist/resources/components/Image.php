@@ -154,14 +154,25 @@ class Image extends Component
     {
         $media = $this->getState('media');
         $sources = $this->generateSources();
-        $defaultSrc = $media->src("image-xl") ?? $media->src("full");
-        $defaultSrcset = $media->src("image-l") . " 1280w, " . $defaultSrc . " 1920w";
+        
+        // Get the largest size for default src
+        $sizes = $this->getState('sizes') ?: Size::SIZES;
+        $largestSize = array_reduce(array_keys($sizes), function($carry, $key) use ($sizes) {
+            if (!$carry || $sizes[$key][0] > $sizes[$carry][0]) {
+                return $key;
+            }
+            return $carry;
+        });
+        
+        $defaultSrc = $media->src($largestSize) ?? $media->src("full");
+        $defaultSrcset = $media->src("image-l") . " 1280w, " . $defaultSrc . " " . $sizes[$largestSize][0] . "w";
 
         return <<<HTML
-        <figure class="lively-component {$this->getState('class')}" lively:component="{$this->getId()}" role="region" aria-label="Image">
+        <figure class="lively-component ofi-parent {$this->getState('class')}" lively:component="{$this->getId()}" role="region" aria-label="Image">
             <picture>
                 {$sources}
                 <img
+                    class="ofi-image"
                     srcset="{$defaultSrcset}"
                     src="{$defaultSrc}"
                     alt="{$media->alt()}">

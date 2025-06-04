@@ -18,6 +18,9 @@ require_once __DIR__ . '/includes/core/utils/Autoloader.php';
 // Include scripts
 require_once __DIR__ . '/config/enqueue.php';
 
+// Include routes
+require_once __DIR__ . '/routes/api.php';
+
 class Lively
 {
     /**
