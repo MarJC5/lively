@@ -1,16 +1,4 @@
 <?php
-/**
- * JsonLD
- *
- * Handles the generation and rendering of JSON-LD structured data for various
- * page types, improving SEO and enabling rich search engine features.
- *
- * Features:
- * - Automatically detects page types and adds appropriate JSON-LD data.
- * - Supports schema for posts, pages, products, archives, homepage, search results, and 404 pages.
- * - Provides extensible methods for adding custom structured data.
- * - Renders JSON-LD data in the `<head>` section of the site.
- */
 
 namespace Lively\SEO;
 

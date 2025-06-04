@@ -2,7 +2,8 @@
 
 namespace Lively;
 
-defined('ABSPATH') || exit;
+// Prevent direct access.
+defined('ABSPATH') or exit;
 
 ?>
 <!doctype html>

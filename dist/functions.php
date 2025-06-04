@@ -2,7 +2,8 @@
 
 namespace Lively;
 
-defined('ABSPATH') || exit;
+// Prevent direct access.
+defined('ABSPATH') or exit;
 
 // Constants
 define('LIVELY_THEME_VERSION', '1.0.0');
@@ -49,7 +50,13 @@ class Lively
          * Initialize the media
          */
         \Lively\Media\Size::get_instance()->init();
+
+        /**
+         * Initialize the post types
+         */
+        \Lively\Admin\PostTypeRegistry::init();
     }
 }
 
-add_action('init', [Lively::class, 'init']);
+// Initialize early
+add_action('after_setup_theme', [Lively::class, 'init']);

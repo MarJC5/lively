@@ -2,6 +2,9 @@
 
 namespace Lively\Resources\Components;
 
+// Prevent direct access.
+defined('ABSPATH') or exit;
+
 use Lively\Core\View\Component;
 use Lively\Media\Size;
 use Lively\Models\Media;

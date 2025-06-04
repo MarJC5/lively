@@ -1,6 +1,7 @@
 <?php
 
-defined('ABSPATH') || exit;
+// Prevent direct access.
+defined('ABSPATH') or exit;
 
 /**
  * Lively framework helper functions

@@ -1,15 +1,16 @@
 <?php
 
-defined('ABSPATH') || exit;
+// Prevent direct access.
+defined('ABSPATH') or exit;
 
-if (!function_exists('sigeasy_enqueue_scripts')) {
+if (!function_exists('lively_enqueue_scripts')) {
     /**
      * Enqueue scripts
      * 
      * @param string $hook
      * @return void
      */
-    function sigeasy_enqueue_scripts($hook) {
+    function lively_enqueue_scripts($hook) {
         $manifest_path = LIVELY_THEME_DIR . '/manifest.json';
         if (!file_exists($manifest_path)) {
             error_log('Manifest file not found');
@@ -59,4 +60,4 @@ if (!function_exists('sigeasy_enqueue_scripts')) {
  * @param string $hook
  * @return void
  */
-add_action('wp_enqueue_scripts', 'sigeasy_enqueue_scripts');
+add_action('wp_enqueue_scripts', 'lively_enqueue_scripts');

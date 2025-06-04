@@ -2,7 +2,8 @@
 
 namespace Lively\Resources\Components;
 
-defined('ABSPATH') || exit;
+// Prevent direct access.
+defined('ABSPATH') or exit;
 
 use Lively\Core\View\Component;
 
