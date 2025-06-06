@@ -14,7 +14,7 @@ defined('ABSPATH') or exit;
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Lively CSRF Token -->
-    <?php lively_csrf(); ?>
+    <?php ly_csrf(); ?>
     <!-- WordPress head -->
     <?php wp_head(); ?>
 </head>

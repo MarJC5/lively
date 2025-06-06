@@ -8,7 +8,7 @@ defined('ABSPATH') or exit;
 ?>
 
 <?php wp_footer(); ?>
-<?php lively_states(); ?>
+<?php ly_states(); ?>
 </body>
 
 </html>
