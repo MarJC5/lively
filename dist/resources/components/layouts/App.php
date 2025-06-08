@@ -20,9 +20,9 @@ class App extends Component {
      */
     public function render() {
         return <<<HTML
-        <div id="{$this->getState('id')}" class="lively-component app {$this->getState('class')}" lively:component="{$this->getId()}" role="region" aria-label="App">
+        <main id="{$this->getState('id')}" class="lively-component app {$this->getState('class')}" lively:component="{$this->getId()}" role="region" aria-label="App">
             {$this->getProps('children')}
-        </div>
+        </main>
         HTML;
     }
 }

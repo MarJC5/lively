@@ -13,6 +13,7 @@ class ToggleSwitch extends Component
     {
         $this->setState('id', $this->getProps('id') ?? uniqid('toggle-switch-'));
         $this->setState('name', $this->getProps('name') ?? '');
+        $this->setState('description', $this->getProps('description') ?? '');
         $this->setState('checked', $this->getProps('checked') ?? false);
         $this->setState('disabled', $this->getProps('disabled') ?? false);
         $this->setState('label', $this->getProps('label') ?? '');
@@ -35,18 +36,27 @@ class ToggleSwitch extends Component
         $checked = $this->getState('checked') ? 'checked' : '';
         $disabled = $this->getState('disabled') ? 'disabled' : '';
         $label = $this->getState('label');
+        $description = $this->getState('description');
 
         return <<<HTML
-        <div  class="lively-component toggle-switch" lively:component="{$this->getId()}" role="switch" aria-checked="{$checked}" aria-label="Toggle Switch">
-            <input type="checkbox" 
-                   class="toggle-switch__input" 
-                   id="{$id}"
-                   name="{$name}"
-                   {$checked}
-                   {$disabled}
-                   aria-label="{$label}"
-                   lively:onclick="toggle">
-            <label class="toggle-switch__slider" for="{$id}"></label>
+        <div class="lively-component toggle-switch" lively:component="{$this->getId()}" role="switch" aria-checked="{$checked}" aria-label="Toggle Switch">
+            <div class="toggle-switch__wrapper">
+                <label for="{$id}">
+                    <input type="checkbox" 
+                           class="toggle-switch__input" 
+                           id="{$id}"
+                           name="{$name}"
+                           {$checked}
+                           {$disabled}
+                           aria-label="{$label}"
+                           lively:onclick="toggle">
+                    <label class="toggle-switch__slider" for="{$id}"></label>
+                </label>
+            </div>
+            <div class="toggle-switch__content">
+                <h3 class="toggle-switch__label">{$label}</h3>
+                <p class="toggle-switch__description">{$description}</p>
+            </div>
         </div>
         HTML;
     }
