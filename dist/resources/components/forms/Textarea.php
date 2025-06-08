@@ -1,6 +1,6 @@
 <?php
 
-namespace Lively\Resources\Components\forms;
+namespace Lively\Resources\Components\Forms;
 
 use Lively\Core\View\Component;
 
