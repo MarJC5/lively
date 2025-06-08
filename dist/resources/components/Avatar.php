@@ -40,8 +40,15 @@ class Avatar extends Component {
         $this->setState('media', $this->getProps('media'));
         $this->setState('size', $this->getProps('size') ?? 64);
         $this->setState('class', $this->getProps('class') ?? '');
+        $this->setState('href', $this->getProps('href') ?? '#');
+        $this->setState('target', $this->getProps('target') ?? '_self');
     }
     
+    /**
+     * Render the icon component
+     * 
+     * @return string The rendered HTML
+     */
     public function render() {
         $size = $this->getState('size');
         $customClass = $this->getState('class');
@@ -60,9 +67,9 @@ class Avatar extends Component {
         ]);
         
         return <<<HTML
-        <div class="lively-component avatar {$customClass}" lively:component="{$this->getId()}" role="region" aria-label="Avatar" style="width: {$size}px; height: {$size}px;">
-            {$image->render()}
-        </div>
+        <a class="lively-component avatar {$customClass}" lively:component="{$this->getId()}" role="region" aria-label="Avatar" style="display: inline-block; width: {$size}px; height: {$size}px;" href="{$this->getState('href')}" target="{$this->getState('target')}">
+            {$image}
+        </a>
         HTML;
     }
 }

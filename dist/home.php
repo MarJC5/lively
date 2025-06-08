@@ -1,13 +1,14 @@
-<?php 
+<?php
 
 // Prevent direct access.
 defined('ABSPATH') or exit;
 
-get_header() 
+get_header();
 
 ?>
 
-<div class="container">
-</div>
+<?php ly('App', [ 'children' => ly_html(function() { ?>
+    <?php ly('OTP', [ 'length' => 9 ]) ?>
+<?php })]) ?>
 
-<?php get_footer() ?>
+<?php get_footer(); ?>

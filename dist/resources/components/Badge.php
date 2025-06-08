@@ -3,6 +3,7 @@
 namespace Lively\Resources\Components;
 
 use Lively\Core\View\Component;
+use Lively\Resources\Components\Icon;
 
 /**
  * Badge Component
@@ -44,6 +45,11 @@ class Badge extends Component {
         $this->setState('type', $this->getProps('type') ?? 'default');
     }
     
+    /**
+     * Render the icon component
+     * 
+     * @return string The rendered HTML
+     */
     public function render() {
         $iconHtml = '';
         if (!empty($this->getState('icon'))) {
@@ -53,7 +59,7 @@ class Badge extends Component {
         
         return <<<HTML
         <div class="lively-component badge badge-{$this->getState('type')} {$this->getState('class')}" lively:component="{$this->getId()}" role="region" aria-label="Badge">
-            <span class="badge-label">{$this->getState('label')}</span>
+            <span class="badge__label">{$this->getState('label')}</span>
             {$iconHtml}
         </div>
         HTML;

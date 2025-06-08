@@ -19,6 +19,12 @@ class Progress extends Component {
         $this->setState('name', $this->getProps('name') ?? '');   
     }
     
+    /**
+    /**
+     * Render the icon component
+     * 
+     * @return string The rendered HTML
+     */
     public function render() {
         return <<<HTML
         <input 
@@ -33,7 +39,7 @@ class Progress extends Component {
             step="{$this->getState('step')}" 
             id="{$this->getState('id')}" 
             name="{$this->getState('name')}"
-            class="{$this->getState('class')}">
+            class="{$this->getState('class')}"/>
         HTML;
     }
 }

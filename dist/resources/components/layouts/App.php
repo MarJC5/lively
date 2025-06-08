@@ -13,6 +13,11 @@ class App extends Component {
         $this->setState('id', $this->getProps('id') ?? 'app');
     }
     
+    /**
+     * Render the icon component
+     * 
+     * @return string The rendered HTML
+     */
     public function render() {
         return <<<HTML
         <div id="{$this->getState('id')}" class="lively-component app {$this->getState('class')}" lively:component="{$this->getId()}" role="region" aria-label="App">

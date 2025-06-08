@@ -684,6 +684,19 @@ class Lively {
                 }
             });
 
+            // Save the currently focused element and its selection state
+            const activeElement = document.activeElement;
+            const isInputElement = activeElement && (activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'INPUT');
+            let selectionStart = null;
+            let selectionEnd = null;
+            let activeElementId = null;
+            
+            if (isInputElement && el.contains(activeElement)) {
+                selectionStart = activeElement.selectionStart;
+                selectionEnd = activeElement.selectionEnd;
+                activeElementId = activeElement.id;
+            }
+
             // Check if the HTML contains duplicate component attributes
             let html = component.html;
             
@@ -720,6 +733,20 @@ class Lively {
             Object.entries(attributes).forEach(([name, value]) => {
                 el.setAttribute(name, value);
             });
+
+            // Restore focus and selection if it was an input element
+            if (isInputElement) {
+                const newInputElement = activeElementId ? 
+                    el.querySelector(`#${activeElementId}`) : 
+                    el.querySelector(activeElement.tagName.toLowerCase());
+                
+                if (newInputElement) {
+                    newInputElement.focus();
+                    if (selectionStart !== null && selectionEnd !== null) {
+                        newInputElement.setSelectionRange(selectionStart, selectionEnd);
+                    }
+                }
+            }
             
             // Trigger a custom event that can be listened to
             el.dispatchEvent(new CustomEvent('lively:updated', {
