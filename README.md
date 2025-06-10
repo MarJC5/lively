@@ -1,73 +1,77 @@
-# Lively - WordPress Theme Moderne
+# Lively - Modern WordPress Theme
 
-Lively est un thème WordPress moderne qui introduit un système de composants inspiré de Livewire, permettant une expérience de développement plus dynamique et interactive.
+Lively is a modern WordPress theme that introduces a component system inspired by Livewire, enabling a more dynamic and interactive development experience.
 
 ## 🚀 Concept
 
-Lively repense l'approche traditionnelle du développement WordPress en introduisant un système de composants réactifs, similaire à Livewire. Cette approche permet de :
+Lively rethinks the traditional WordPress development approach by introducing a reactive component system, similar to Livewire. This approach allows you to:
 
-- Créer des composants interactifs sans avoir à écrire de JavaScript complexe
-- Maintenir une structure de code propre et modulaire
-- Bénéficier d'une expérience de développement moderne tout en restant dans l'écosystème WordPress
+- Create interactive components without writing complex JavaScript
+- Maintain a clean and modular code structure
+- Benefit from a modern development experience while staying within the WordPress ecosystem
 
 ## 🏗️ Architecture
 
-Le thème est construit avec une architecture moderne utilisant :
+The theme is built with a modern architecture using:
 
-- **Vite** comme bundler pour une expérience de développement rapide
-- **Sass** pour une gestion avancée des styles
-- Un système de composants personnalisé pour la réactivité
+- **Vite** as a bundler for a fast development experience
+- **Sass** for advanced style management
+- A custom component system for reactivity
 
-### Structure des dossiers
+### Directory Structure
 
 ```
 lively/
 ├── src/
-│   ├── js/          # JavaScript et composants
-│   │   ├── hooks/   # Hooks WordPress personnalisés
-│   │   └── lib/     # Bibliothèques et utilitaires
-│   └── scss/        # Styles Sass
-├── dist/            # Fichiers compilés
-└── cli/            # Outils de développement
+│   ├── js/          # JavaScript and components
+│   │   ├── hooks/   # Custom WordPress hooks
+│   │   └── lib/     # Libraries and utilities
+│   └── scss/        # Sass styles
+├── dist/            # Compiled files
+└── cli/            # Development tools
 ```
 
 ## 🛠️ Installation
 
-1. Clonez le thème dans votre dossier `wp-content/themes/`
-2. Installez les dépendances :
+1. Clone the theme into your `wp-content/themes/` folder
+2. Install dependencies:
    ```bash
    yarn install
    ```
-3. Lancez le serveur de développement :
+3. Start the development server:
    ```bash
    yarn dev
    ```
 
-## 📦 Scripts disponibles
+## 📦 Available Scripts
 
-- `yarn dev` : Lance le serveur de développement Vite
-- `yarn watch` : Compile les assets en mode watch
-- `yarn build` : Compile les assets pour la production
+- `yarn dev` : Starts the Vite development server
+- `yarn watch` : Compiles assets in watch mode
+- `yarn build` : Compiles assets for production
 
-## 🎯 Système de composants
+## 🎯 Component System
 
-Le système de composants de Lively s'inspire de Livewire pour offrir :
+Lively's component system is inspired by Livewire to provide:
 
-- Des composants réactifs côté serveur
-- Une mise à jour automatique du DOM
-- Une gestion d'état simplifiée
-- Une intégration transparente avec WordPress
+- Server-side reactive components
+- Automatic DOM updates
+- Simplified state management
+- Seamless WordPress integration
 
-## 🔧 Développement
+## 🔧 Development
 
-Pour contribuer au développement :
+To contribute to development:
 
-1. Créez une branche pour votre fonctionnalité
-2. Développez en utilisant `yarn dev`
-3. Testez vos modifications
-4. Soumettez une pull request
+1. Create a branch for your feature
+2. Develop using `yarn dev`
+3. Test your changes
+4. Submit a pull request
 
-## 📝 Licence
+## Production
 
-ISC - Développé par Martin IS IT Services
+Once the theme is compiled, simply copy the dist folder to `wp-content/themes/` and select the theme in the WordPress administration panel.
+
+## 📝 License
+
+MIT - Developed by Martin IS IT Services
 

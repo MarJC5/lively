@@ -36,8 +36,52 @@
 .container {
     @include make-container();
     @include make-container-max-widths();
-}
 
-.container-fluid {
-    @include make-container();
+    &--sm {
+        @include make-container(var(--spacing-2));
+    }
+
+    &--md {
+        @include make-container(var(--spacing-4));
+    }
+
+    &--lg {
+        @include make-container(var(--spacing-6));
+    }
+
+    &--xl {
+        @include make-container(var(--spacing-8));
+    }
+
+    &--2xl {
+        @include make-container(var(--spacing-10));
+    }
+
+    &--3xl {
+        @include make-container(var(--spacing-12));
+    }
+
+    &--4xl {
+        @include make-container(var(--spacing-14));
+    }
+
+    &--5xl {
+        @include make-container(var(--spacing-16));
+    }
+
+    &--6xl {
+        @include make-container(var(--spacing-18));
+    }
+
+    &--7xl {
+        @include make-container(var(--spacing-20));
+    }
+
+    &--full {
+        @include make-container(0);
+    }
+
+    &--fluid {
+        @include make-container(0);
+    }
 }
