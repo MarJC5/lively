@@ -5,10 +5,45 @@ namespace Lively\Resources\Components\Forms;
 use Lively\Core\View\Component;
 
 /**
+ * ToggleSwitch Component
+ * 
+ * A toggle switch component that provides a modern alternative to checkboxes.
+ * Supports labels, descriptions, and various states. Used for boolean options
+ * or settings that need to be toggled on/off.
+ * 
+ * @example
+ * ```php
+ * // Basic toggle switch
+ * new ToggleSwitch([
+ *     'name' => 'notifications',
+ *     'label' => 'Enable notifications',
+ *     'description' => 'Receive push notifications for updates'
+ * ]);
+ * 
+ * // Checked and disabled toggle switch
+ * new ToggleSwitch([
+ *     'name' => 'dark-mode',
+ *     'label' => 'Dark Mode',
+ *     'description' => 'Switch to dark theme',
+ *     'checked' => true,
+ *     'disabled' => true
+ * ]);
+ * ```
+ * 
+ * @property string $id Unique identifier for the toggle switch
+ * @property string $name The name attribute for the toggle switch
+ * @property string $description Optional description text below the label
+ * @property bool $checked Whether the toggle switch is checked
+ * @property bool $disabled Whether the toggle switch is disabled
+ * @property string $label The label text for the toggle switch
+ * 
  * @view
  */
 class ToggleSwitch extends Component
 {
+    /**
+     * Initialize the component state with default values
+     */
     protected function initState()
     {
         $this->setState('id', $this->getProps('id') ?? uniqid('toggle-switch-'));
@@ -19,6 +54,9 @@ class ToggleSwitch extends Component
         $this->setState('label', $this->getProps('label') ?? '');
     }
 
+    /**
+     * Toggle the checked state of the switch
+     */
     public function toggle()
     {
         $this->setState('checked', !$this->getState('checked'));
