@@ -1,0 +1,164 @@
+@use 'sass:map';
+@use 'sass:meta';
+@use 'variables' as *;
+@use 'breakpoint' as *;
+
+:root {
+    /* Spacing */
+    --spacing-0: 0;
+    --spacing-1: 0.25rem;
+    /* 4px */
+    --spacing-2: 0.5rem;
+    /* 8px */
+    --spacing-3: 0.75rem;
+    /* 12px */
+    --spacing-4: 1rem;
+    /* 16px */
+    --spacing-5: 1.25rem;
+    /* 20px */
+    --spacing-6: 1.5rem;
+    /* 24px */
+    --spacing-8: 2rem;
+    /* 32px */
+    --spacing-10: 2.5rem;
+    /* 40px */
+    --spacing-12: 3rem;
+    /* 48px */
+    --spacing-16: 4rem;
+    /* 64px */
+    --spacing-20: 5rem;
+    /* 80px */
+    --spacing-24: 6rem;
+    /* 96px */
+    --spacing-28: 7rem;
+    /* 112px */
+    --spacing-32: 8rem;
+    /* 128px */
+    --spacing-36: 9rem;
+    /* 144px */
+    --spacing-40: 10rem;
+    /* 160px */
+    --spacing-44: 11rem;
+    /* 176px */
+    --spacing-48: 12rem;
+    /* 192px */
+    --spacing-52: 13rem;
+    /* 208px */
+    --spacing-56: 14rem;
+    /* 224px */
+    --spacing-60: 15rem;
+    /* 240px */
+    --spacing-64: 16rem;
+    /* 256px */
+    --spacing-72: 18rem;
+    /* 288px */
+    --spacing-80: 20rem;
+    /* 320px */
+    --spacing-96: 24rem;
+    /* 384px */
+}
+
+// Base spacing
+@each $space-prop-key, $space-prop in $spacing-properties {
+  @each $size in (0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96) {
+    .#{$space-prop-key}-#{$size} {
+      #{$space-prop}: var(--spacing-#{$size});
+    }
+  }
+
+  @each $direction-key, $direction in $spacing-directions {
+    @each $size in (0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96) {
+      .#{$space-prop-key}#{$direction-key}-#{$size} {
+        @if meta.type-of($direction) == 'list' {
+          @each $dir in $direction {
+            #{$space-prop}-#{$dir}: var(--spacing-#{$size});
+          }
+        } @else {
+          #{$space-prop}-#{$direction}: var(--spacing-#{$size});
+        }
+      }
+    }
+  }
+
+  @if $space-prop-key == 'm' {
+    .#{$space-prop-key}-auto {
+      #{$space-prop}: auto;
+    }
+    
+    @each $direction-key, $direction in $spacing-directions {
+      .#{$space-prop-key}#{$direction-key}-auto {
+        @if meta.type-of($direction) == 'list' {
+          @each $dir in $direction {
+            #{$space-prop}-#{$dir}: auto;
+          }
+        } @else {
+          #{$space-prop}-#{$direction}: auto;
+        }
+      }
+    }
+  }
+}
+
+// Responsive spacing
+@each $breakpoint in map.keys($breakpoints) {
+  @include breakpoint-up($breakpoint) {
+    @each $space-prop-key, $space-prop in $spacing-properties {
+      @each $size in (0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96) {
+        .#{$space-prop-key}-#{$breakpoint}-#{$size} {
+          #{$space-prop}: var(--spacing-#{$size});
+        }
+      }
+
+      @each $direction-key, $direction in $spacing-directions {
+        @each $size in (0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96) {
+          .#{$space-prop-key}#{$direction-key}-#{$breakpoint}-#{$size} {
+            @if meta.type-of($direction) == 'list' {
+              @each $dir in $direction {
+                #{$space-prop}-#{$dir}: var(--spacing-#{$size});
+              }
+            } @else {
+              #{$space-prop}-#{$direction}: var(--spacing-#{$size});
+            }
+          }
+        }
+      }
+
+      @if $space-prop-key == 'm' {
+        .#{$space-prop-key}-#{$breakpoint}-auto {
+          #{$space-prop}: auto;
+        }
+        
+        @each $direction-key, $direction in $spacing-directions {
+          .#{$space-prop-key}#{$direction-key}-#{$breakpoint}-auto {
+            @if meta.type-of($direction) == 'list' {
+              @each $dir in $direction {
+                #{$space-prop}-#{$dir}: auto;
+              }
+            } @else {
+              #{$space-prop}-#{$direction}: auto;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Negative margins
+@each $size in (1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96) {
+  .-m-#{$size} {
+    margin: calc(var(--spacing-#{$size}) * -1);
+  }
+
+  @each $direction-key, $direction in $spacing-directions {
+    .-m#{$direction-key}-#{$size} {
+      @if meta.type-of($direction) == 'list' {
+        @each $dir in $direction {
+          margin-#{$dir}: calc(var(--spacing-#{$size}) * -1);
+        }
+      } @else {
+        margin-#{$direction}: calc(var(--spacing-#{$size}) * -1);
+      }
+    }
+  }
+}

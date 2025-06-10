@@ -204,4 +204,39 @@ abstract class PostType
     {
         return 'delete_post_meta';
     }
+
+    /**
+     * Get the post type.
+     * This method is used to get a post type object from an ID.
+     *
+     * @param int $id
+     * @param string|null $postType
+     * @return PostType
+     */
+    public static function get(int $id, ?string $postType = null)
+    {
+        $postType = $postType ?? get_post_type($id);
+        $modelClass = "\\Lively\\Models\\" . ucfirst($postType);
+        return new $modelClass($id);
+    }
+
+    /**
+     * Get the post type.
+     * This method is used to get a post type object from an array of IDs.
+     *
+     * @param array $ids
+     * @param callable|null $callback
+     * @return array
+     */
+    public static function gets(array $ids, ?callable $callback = null)
+    {
+        $models = [];
+        foreach ($ids as $id) {
+            $postType = get_post_type($id);
+            $modelClass = "\\Lively\\Models\\" . ucfirst($postType);
+            $models[] = $callback ? $callback(new $modelClass($id)) : new $modelClass($id);
+        }
+
+        return $models;
+    }
 } 

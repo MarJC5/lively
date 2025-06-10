@@ -43,11 +43,12 @@ class Autoloader {
      */
     public function registerFrameworkNamespaces(string $rootDir) {
         // Register core namespace
-        $this->registerNamespace('Lively\\Core', $rootDir . '/includes/core');
-        $this->registerNamespace('Lively\\SEO', $rootDir . '/includes/seo');
         $this->registerNamespace('Lively\\Admin', $rootDir . '/includes/admin');
+        $this->registerNamespace('Lively\\Core', $rootDir . '/includes/core');
+        $this->registerNamespace('Lively\\Database', $rootDir . '/includes/database');
         $this->registerNamespace('Lively\\Media', $rootDir . '/includes/media');
         $this->registerNamespace('Lively\\Models', $rootDir . '/includes/models');
+        $this->registerNamespace('Lively\\SEO', $rootDir . '/includes/seo');
         $this->registerNamespace('Lively\\Resources', $rootDir . '/resources');
 
         // Register base namespace

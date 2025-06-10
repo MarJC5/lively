@@ -1,0 +1,46 @@
+$container-max-widths: (
+  'sm': 540px,
+  'md': 720px,
+  'lg': 960px,
+  'xl': 1140px,
+  '2xl': 1320px,
+  '3xl': 1500px,
+  '4xl': 1680px,
+  '5xl': 1860px,
+  '6xl': 2040px,
+  '7xl': 2220px
+);
+
+$breakpoints: (
+  'xs': 0,
+  'sm': 576px,
+  'md': 768px,
+  'lg': 992px,
+  'xl': 1200px,
+  '2xl': 1400px,
+  '3xl': 1600px,
+  '4xl': 1800px,
+  '5xl': 2000px,
+  '6xl': 2200px,
+  '7xl': 2400px
+);
+
+$spacing-properties: (
+  'm': margin,
+  'p': padding
+);
+
+$spacing-directions: (
+  't': top,
+  'r': right,
+  'b': bottom,
+  'l': left,
+  'x': (left, right),
+  'y': (top, bottom)
+);
+
+// Grid Variables
+$grid-columns: 3;
+$grid-gap: var(--spacing-4);
+$grid-gap-sm: var(--spacing-2);
+$grid-gap-lg: var(--spacing-6);

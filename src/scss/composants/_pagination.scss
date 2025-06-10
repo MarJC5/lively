@@ -1,0 +1,48 @@
+// Pagination Component Styles
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+
+  &__list {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__page,
+  &__first,
+  &__last,
+  &__prev,
+  &__next {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-decoration: none;
+    user-select: none;
+  }
+
+  &__current {
+    font-weight: bold;
+    pointer-events: none;
+  }
+
+  &__disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  &__info {
+    margin-left: 1.5rem;
+    font-size: 1rem;
+    align-self: center;
+  }
+}

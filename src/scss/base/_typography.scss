@@ -2,23 +2,43 @@
     // Default
     --font-size: 20px;
 
-    // Font size (em)
-    --font-size-xs: 0.75em;
-    --font-size-sm: 0.875em;
-    --font-size-md: 1em;
-    --font-size-lg: 1.125em;
-    --font-size-xl: 1.25em;
-    --font-size-2xl: 1.5em;
-    --font-size-3xl: 1.75em;
-    --font-size-4xl: 2em;
-    --font-size-5xl: 2.5em;
+    --font-size-xs: 0.75rem;
+    /* 12px */
+    --font-size-sm: 0.875rem;
+    /* 14px */
+    --font-size-base: 1rem;
+    /* 16px */
+    --font-size-lg: 1.125rem;
+    /* 18px */
+    --font-size-xl: 1.25rem;
+    /* 20px */
+    --font-size-2xl: 1.5rem;
+    /* 24px */
+    --font-size-3xl: 1.875rem;
+    /* 30px */
+    --font-size-4xl: 2.25rem;
+    /* 36px */
+    --font-size-5xl: 3rem;
+    /* 48px */
+    --font-size-6xl: 3.75rem;
+    /* 60px */
+    --font-size-7xl: 4.5rem;
+    /* 72px */
+    --font-size-8xl: 6rem;
+    /* 96px */
+    --font-size-9xl: 8rem;
+    /* 128px */
 
     // Font family
     --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
     // Font weight
-    --font-weight: 400;
+    --font-weight: var(--font-weight-normal);
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
     --font-weight-bold: 700;
 
     // Line height
@@ -41,34 +61,51 @@ body {
     box-sizing: border-box;
 }
 
-h1, .h1 {
-    font-size: var(--font-size-5xl);
-}
-
-h2, .h2 {
-    font-size: var(--font-size-4xl);
-}
-
-h3, .h3 {
-    font-size: var(--font-size-3xl);
-}
-
-h4, .h4 {
+h1,
+.h1 {
     font-size: var(--font-size-2xl);
 }
 
-h5, .h5 {
+h2,
+.h2 {
     font-size: var(--font-size-xl);
 }
 
-h6, .h6 {
+h3,
+.h3 {
     font-size: var(--font-size-lg);
 }
 
-h1, h2, h3 {
+h4,
+.h4 {
+    font-size: var(--font-size-base);
+}
+
+h5,
+.h5 {
+    font-size: var(--font-size-base);
+}
+
+h6,
+.h6 {
+    font-size: var(--font-size-base);
+}
+
+h1,
+h2,
+h3 {
     margin: 0;
     line-height: 1.1;
 }
 
 
+small,
+.small {
+    font-size: var(--font-size-sm);
+}
 
+time,
+p {
+    margin: 0;
+    font-size: var(--font-size-base);
+}
