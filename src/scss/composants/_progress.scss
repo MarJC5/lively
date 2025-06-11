@@ -1,0 +1,137 @@
+@use '@/scss/base/variables' as *;
+
+.progress-bar {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: $component-height * 0.25;
+    background: transparent;
+    border: $icon-stroke-width solid var(--color-border);
+    border-radius: $component-border-radius;
+    outline: none;
+    transition: $component-transition;
+
+    // Webkit browsers (Chrome, Safari, Edge)
+    &::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        background: linear-gradient(
+            to right,
+            var(--color-primary) 0%,
+            var(--color-primary) calc(var(--value, 0) * 1%),
+            color-mix(in srgb, var(--color-border) 30%, white) calc(var(--value, 0) * 1%),
+            color-mix(in srgb, var(--color-border) 30%, white) 100%
+        );
+        border-radius: $component-border-radius;
+        border: $icon-stroke-width solid var(--color-border);
+    }
+
+    // Firefox
+    &::-moz-range-track {
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        background: color-mix(in srgb, var(--color-border) 30%, white);
+        border-radius: $component-border-radius;
+        border: $icon-stroke-width solid var(--color-border);
+    }
+    &::-moz-range-progress {
+        background-color: var(--color-primary);
+        height: 100%;
+        border-radius: $component-border-radius;
+    }
+
+    // IE/Edge
+    &::-ms-fill-lower {
+        background: var(--color-primary);
+        border-radius: $component-border-radius;
+    }
+    &::-ms-fill-upper {
+        background: var(--color-border);
+        border-radius: $component-border-radius;
+    }
+
+    // Thumb styles
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: $component-height * 0.5;
+        height: $component-height * 0.5;
+        border-radius: 50%;
+        background: var(--color-primary);
+        cursor: pointer;
+        border: $icon-stroke-width solid var(--color-primary);
+        margin-top: calc(($component-height * 0.25) / 2 - ($component-height * 0.5) / 2);
+        transition: $component-transition;
+
+        &:hover {
+            background: var(--color-primary);
+            transform: scale(1.1);
+        }
+    }
+
+    &::-moz-range-thumb {
+        width: $component-height * 0.5;
+        height: $component-height * 0.5;
+        border-radius: 50%;
+        background: var(--color-primary);
+        cursor: pointer;
+        border: $icon-stroke-width solid var(--color-primary);
+        transition: $component-transition;
+
+        &:hover {
+            background: var(--color-primary);
+            transform: scale(1.1);
+        }
+    }
+
+    // Focus styles
+    &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+
+    // Disabled styles
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    // Progress fill (for browsers that support it)
+    &::-moz-progress-bar {
+        background: var(--color-primary);
+        border-radius: $component-border-radius;
+    }
+
+    &::-webkit-progress-value {
+        background: var(--color-primary);
+        border-radius: $component-border-radius;
+    }
+
+    // Value label
+    &__value {
+        font-size: $component-font-size-small;
+        color: var(--color-text-secondary);
+        margin-top: var(--spacing-1);
+    }
+}
+
+// JS helper for Webkit browsers to set --value
+.progress-bar {
+    &::-webkit-slider-runnable-track {
+        background: color-mix(in srgb, var(--color-border) 30%, white);
+    }
+    &.has-js {
+        &::-webkit-slider-runnable-track {
+            background: linear-gradient(
+                to right,
+                var(--color-primary) 0%,
+                var(--color-primary) calc(var(--value, 0) * 1%),
+                color-mix(in srgb, var(--color-border) 30%, white) calc(var(--value, 0) * 1%),
+                color-mix(in srgb, var(--color-border) 30%, white) 100%
+            );
+        }
+    }
+}

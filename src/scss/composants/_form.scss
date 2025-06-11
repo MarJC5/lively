@@ -1,0 +1,58 @@
+@use '@/scss/base/variables' as *;
+
+.form {
+    &--search {
+        display: flex;
+        gap: $component-gap;
+        align-items: center;
+        position: relative;
+
+        input[type="search"] {
+            flex: 1;
+            height: $component-height;
+            padding: 0 $component-padding;
+            margin: 0;
+            display: flex;
+            border: $icon-stroke-width solid var(--color-border);
+            border-radius: $component-border-radius;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            font-size: $component-font-size;
+            transition: $component-transition;
+
+            &:focus {
+                outline: none;
+                border-color: var(--color-primary);
+                box-shadow: $component-shadow rgba(var(--color-primary-rgb), $component-shadow-opacity);
+            }
+
+            &::placeholder {
+                color: var(--color-text-secondary);
+            }
+        }
+
+        button, input[type="submit"] {
+            display: flex;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            height: 100%;
+            padding: 0 $component-padding;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text);
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            height: 100%;
+            transition: $component-transition;
+
+            &:hover {
+                color: var(--color-primary);
+            }
+        }
+    }
+}

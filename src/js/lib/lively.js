@@ -48,6 +48,25 @@ class Lively {
         document.addEventListener('click', this.handleGlobalEvent.bind(this));
         document.addEventListener('input', this.handleGlobalEvent.bind(this));
         document.addEventListener('change', this.handleGlobalEvent.bind(this));
+        
+        // Setup timeout event handlers
+        this.setupTimeoutHandlers();
+    }
+    
+    // Setup timeout event handlers
+    setupTimeoutHandlers() {
+        document.querySelectorAll('[lively\\:ontimeout]').forEach(el => {
+            const timeout = parseInt(el.getAttribute('lively:ontimeout:debounce')) || 0;
+            if (timeout > 0) {
+                setTimeout(() => {
+                    const componentId = this.getComponentId(el);
+                    const action = el.getAttribute('lively:ontimeout');
+                    if (componentId && action) {
+                        this.updateComponent(componentId, action, {});
+                    }
+                }, timeout);
+            }
+        });
     }
     
     // Handle global events for all supported event types
@@ -63,11 +82,35 @@ class Lively {
         // Check both formats: data-lively-* and lively:*
         let action = null;
         let debounceTimeout = null;
+        let actionParams = [];
         
         // First check for the shorthand chained format: data-lively-action:click or lively:onclick
         const shorthandAction = e.target.getAttribute(`lively:on${eventType}`);
         if (shorthandAction) {
-            action = shorthandAction;
+            // Parse the action and its parameters
+            const actionMatch = shorthandAction.match(/^(\w+)(?:\((.*)\))?$/);
+            if (actionMatch) {
+                action = actionMatch[1];
+                if (actionMatch[2]) {
+                    // Parse parameters, handling both string and non-string values
+                    actionParams = actionMatch[2].split(',').map(param => {
+                        param = param.trim();
+                        // If it's a string (starts and ends with quotes)
+                        if ((param.startsWith("'") && param.endsWith("'")) || 
+                            (param.startsWith('"') && param.endsWith('"'))) {
+                            return param.slice(1, -1); // Remove quotes
+                        }
+                        // Try to parse as number
+                        const num = Number(param);
+                        if (!isNaN(num)) return num;
+                        // Try to parse as boolean
+                        if (param === 'true') return true;
+                        if (param === 'false') return false;
+                        // Return as is if none of the above
+                        return param;
+                    });
+                }
+            }
             // Check for debounce with colon syntax: lively:onchange:300
             const attrParts = e.target.getAttribute(`lively:on${eventType}:debounce`);
             if (attrParts) {
@@ -122,6 +165,11 @@ class Lively {
         const args = {};
         if (valueAttr && (eventType === 'input' || eventType === 'change')) {
             args[valueAttr] = e.target.value;
+        }
+        
+        // Add parsed parameters to args
+        if (actionParams.length > 0) {
+            args['params'] = actionParams;
         }
         
         // Apply debounce if needed, otherwise update immediately
@@ -661,6 +709,17 @@ class Lively {
         const el = document.querySelector(`[lively\\:component="${component.id}"]`);
         
         if (el) {
+            // Check if the HTML is empty or just a comment
+            let html = component.html;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            
+            // If the HTML is empty or only contains comments, remove the component
+            if (!html.trim() || (tempDiv.childNodes.length === 1 && tempDiv.firstChild.nodeType === 8)) {
+                el.remove();
+                return;
+            }
+            
             // Save existing class information if it's going to be lost
             let existingClassName = null;
             if (!component.class) {
@@ -698,13 +757,6 @@ class Lively {
             }
 
             // Check if the HTML contains duplicate component attributes
-            let html = component.html;
-            
-            // Create a temporary div to parse the HTML
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
-            
-            // If the HTML contains elements with lively:component, we need to extract the inner content
             const innerComponent = tempDiv.querySelector(`[lively\\:component="${component.id}"]`);
             if (innerComponent) {
                 // Use the inner HTML of the matching component

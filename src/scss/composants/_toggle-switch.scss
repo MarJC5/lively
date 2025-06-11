@@ -1,12 +1,14 @@
+@use '@/scss/base/variables' as *;
+
 .toggle-switch {
   display: flex;
-  gap: 8px;
+  gap: $component-gap;
 
   &__wrapper {
     position: relative;
     display: inline-block;
-    width: 40px;
-    height: 24px;
+    width: $component-height;
+    height: calc($component-height * 0.6);
   }
 
   &__input {
@@ -20,7 +22,7 @@
     }
 
     &:checked + .toggle-switch__slider:before {
-      transform: translateX(16px);
+      transform: translateX($component-height * 0.4);
     }
 
     &:disabled + .toggle-switch__slider {
@@ -38,18 +40,18 @@
     right: 0;
     bottom: 0;
     background-color: var(--color-border);
-    transition: all 0.2s ease;
+    transition: $component-transition;
     border-radius: 100px;
 
     &:before {
       position: absolute;
       content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
+      height: calc($component-height * 0.45);
+      width: calc($component-height * 0.45);
+      left: calc($component-padding * 0.25);
+      bottom: calc($component-padding * 0.25);
       background-color: var(--color-background);
-      transition: all 0.2s ease;
+      transition: $component-transition;
       border-radius: 50%;
     }
   }
@@ -57,14 +59,18 @@
   &__content {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: $component-gap;
   }
 
   &__label {
     margin: 0;
+    font-size: $component-font-size;
+    color: var(--color-text);
   }
 
   &__description {
     margin: 0;
+    font-size: $component-font-size-small;
+    color: var(--color-text-secondary);
   }
 } 

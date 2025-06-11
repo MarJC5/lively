@@ -125,6 +125,7 @@ class ComponentController
             Logger::debug("Component state before method call", [
                 'id' => $componentId,
                 'method' => $method,
+                'args' => $args,
                 'state' => $component->getState()
             ]);
 
@@ -137,13 +138,24 @@ class ComponentController
                 ];
             }
 
-            // Call the method
-            $result = call_user_func_array([$component, $method], $args);
+            // Prepare method arguments
+            $methodArgs = [];
+            if (isset($args['params']) && is_array($args['params'])) {
+                // Use the params array directly if it exists
+                $methodArgs = $args['params'];
+            } else {
+                // Otherwise use the args array as is
+                $methodArgs = $args;
+            }
+
+            // Call the method with the prepared arguments
+            $result = call_user_func_array([$component, $method], $methodArgs);
 
             // Log the component state after method call
             Logger::debug("Component state after method call", [
                 'id' => $componentId,
                 'method' => $method,
+                'args' => $methodArgs,
                 'state' => $component->getState()
             ]);
 

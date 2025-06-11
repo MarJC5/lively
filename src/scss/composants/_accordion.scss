@@ -1,0 +1,46 @@
+@use '@/scss/base/variables' as *;
+
+.accordion {
+    width: 100%;
+
+    &__item {
+        border-bottom: $icon-stroke-width solid var(--color-border);
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    &__title {
+        margin: 0;
+        padding: $component-padding 0;
+        font-size: $component-font-size;
+        color: var(--color-text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: $component-transition;
+
+        &:hover {
+            color: var(--color-primary);
+        }
+    }
+
+    &__content {
+        max-height: 0;
+        overflow: hidden;
+        transition: $component-transition;
+        padding: 0;
+        color: var(--color-text);
+        font-size: $component-font-size;
+    }
+
+    &__item[data-open="1"],
+    &__item[data-open="true"] {
+        .accordion__content {
+            max-height: 500px;
+            padding: $component-padding 0;
+        }
+    }
+}

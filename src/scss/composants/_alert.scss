@@ -1,0 +1,116 @@
+@use '@/scss/base/variables' as *;
+
+.alert {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+    padding: var(--spacing-3) var(--spacing-3);
+    border-radius: $component-border-radius;
+    font-size: $component-font-size;
+    color: var(--color-text);
+    background: var(--color-background);
+    border: $icon-stroke-width solid var(--color-border);
+    box-shadow: 0 2px 8px rgba(var(--color-primary-rgb), 0.06);
+    min-width: 320px;
+    max-width: 100vw;
+    z-index: 1000;
+
+    // Type variants
+    &--info {
+        background: color-mix(in srgb, var(--color-primary) 0%, white);
+        color: var(--color-primary);
+        border-color: var(--color-border);
+    }
+    &--success {
+        background: color-mix(in srgb, var(--color-success) 10%, white);
+        color: var(--color-success);
+        border-color: var(--color-success);
+    }
+    &--warning {
+        background: color-mix(in srgb, var(--color-warning) 10%, white);
+        color: var(--color-warning);
+        border-color: var(--color-warning);
+    }
+    &--danger {
+        background: color-mix(in srgb, var(--color-error) 10%, white);
+        color: var(--color-error);
+        border-color: var(--color-error);
+    }
+
+    // Position utilities
+    &--top-left {
+        position: fixed;
+        top: var(--spacing-6);
+        left: var(--spacing-6);
+        right: auto;
+        bottom: auto;
+    }
+    &--top-right {
+        position: fixed;
+        top: var(--spacing-6);
+        right: var(--spacing-6);
+        left: auto;
+        bottom: auto;
+    }
+    &--bottom-left {
+        position: fixed;
+        bottom: var(--spacing-6);
+        left: var(--spacing-6);
+        right: auto;
+        top: auto;
+    }
+    &--bottom-right {
+        position: fixed;
+        bottom: var(--spacing-6);
+        right: var(--spacing-6);
+        left: auto;
+        top: auto;
+    }
+    &:hover {
+        .alert__close {
+            transition: opacity 0.3s;
+            opacity: 1;
+        }
+    }
+
+    // Close button
+    &__close {
+        position: absolute;
+        top: var(--spacing-2);
+        right: var(--spacing-2);
+        background: none;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        padding: var(--spacing-1);
+        z-index: 2;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+
+        .icon {
+            width: $icon-size * 1.2;
+            height: $icon-size * 1.2;
+        }
+    }
+
+    &__header {
+        display: flex;
+        gap: var(--spacing-2);
+        margin-bottom: var(--spacing-1);
+    }
+    &__title {
+        font-weight: 600;
+        font-size: $component-font-size;
+        margin: 0;
+    }
+    &__content {
+        font-size: $component-font-size;
+        margin-left: 24px;
+    }
+    &__message {
+        margin: 0;
+        font-size: $component-font-size;
+    }
+}

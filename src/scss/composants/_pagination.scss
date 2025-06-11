@@ -1,13 +1,14 @@
-// Pagination Component Styles
+@use '@/scss/base/variables' as *;
+
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 2rem 0;
+  margin: calc($component-padding * 2);
 
   &__list {
     display: flex;
-    gap: 0.5rem;
+    gap: $component-gap;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -21,28 +22,40 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 2.5rem;
-    height: 2.5rem;
-    padding: 0 0.75rem;
-    font-size: 1.2rem;
+    min-width: $component-height;
+    height: $component-height;
+    padding: 0 $component-padding;
+    font-size: $component-font-size;
+    color: var(--color-text);
     cursor: pointer;
     text-decoration: none;
     user-select: none;
+    transition: $component-transition;
+    border-radius: $component-border-radius;
+
+    &:hover {
+      color: var(--color-primary);
+      background-color: rgba(var(--color-primary-rgb), $component-shadow-opacity);
+    }
   }
 
   &__current {
     font-weight: bold;
     pointer-events: none;
+    color: var(--color-primary);
+    background-color: rgba(var(--color-primary-rgb), $component-shadow-opacity);
   }
 
   &__disabled {
     opacity: 0.4;
     pointer-events: none;
+    color: var(--color-text-secondary);
   }
 
   &__info {
-    margin-left: 1.5rem;
-    font-size: 1rem;
+    margin-left: calc($component-padding * 2);
+    font-size: $component-font-size;
+    color: var(--color-text-secondary);
     align-self: center;
   }
 }

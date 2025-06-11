@@ -40,12 +40,11 @@ lively/
    ```
 3. Start the development server:
    ```bash
-   yarn dev
+   yarn watch
    ```
 
 ## 📦 Available Scripts
 
-- `yarn dev` : Starts the Vite development server
 - `yarn watch` : Compiles assets in watch mode
 - `yarn build` : Compiles assets for production
 
@@ -63,7 +62,7 @@ Lively's component system is inspired by Livewire to provide:
 To contribute to development:
 
 1. Create a branch for your feature
-2. Develop using `yarn dev`
+2. Develop using `yarn watch`
 3. Test your changes
 4. Submit a pull request
 

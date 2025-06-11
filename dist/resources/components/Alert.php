@@ -55,6 +55,8 @@ use Lively\Resources\Components\Avatar;
  * @property string $id Optional ID attribute for the alert element
  * @property string $icon Optional icon name to display (without .svg extension). Note: Use either icon or avatar, not both.
  * @property int $avatar Optional user ID to display an avatar. Note: Use either icon or avatar, not both.
+ * @property string $position Optional position for the alert (top, bottom, left, right)
+ * @property int $timeout Optional timeout in milliseconds to close the alert automatically.
  * @property bool $isOpen Optional boolean to control if the alert is open or closed.
  * 
  * @view
@@ -67,9 +69,11 @@ class Alert extends Component
         $this->setState('message', $this->getProps('message') ?? '');
         $this->setState('title', $this->getProps('title') ?? '');
         $this->setState('class', $this->getProps('class') ?? '');
-        $this->setState('id', $this->getProps('id') ?? '');
+        $this->setState('id', $this->getProps('id') ?? uniqid('alert-'));
         $this->setState('icon', $this->getProps('icon') ?? '');
         $this->setState('avatar', $this->getProps('avatar') ?? '');
+        $this->setState('position', $this->getProps('position') ?? 'bottom-right');
+        $this->setState('timeout', $this->getProps('timeout') ?? 3000);
         $this->setState('isOpen', $this->getProps('isOpen') ?? true);
     }
 
@@ -81,7 +85,7 @@ class Alert extends Component
     private function getIcon()
     {
         if ($this->getState('icon')) {
-            return new Icon(array_merge($this->getState('icon'), [ 'width' => 24, 'height' => 24 ]));
+            return new Icon(array_merge($this->getState('icon'), [ 'width' => 16, 'height' => 16, 'strokeWidth' => 2.5 ]));
         }
     }
 
@@ -128,7 +132,7 @@ class Alert extends Component
     }
 
     /**
-     * Close the alert
+     * Close the alert after a timeout
      */
     public function close()
     {
@@ -142,27 +146,32 @@ class Alert extends Component
      */
     public function render()
     {
-        if (!$this->getState('isOpen')) {
-            return '';
+        if ($this->getState('isOpen')) {
+            $positionClass = $this->getState('position') ? 'alert--' . $this->getState('position') : '';
+        
+            return <<<HTML
+                <div 
+                    id="{$this->getState('id')}" 
+                    class="lively-component alert alert--{$this->getState('type')} {$positionClass} {$this->getState('class')}" 
+                    lively:component="{$this->getId()}" 
+                    role="region" 
+                    aria-label="Alert"
+                    lively:ontimeout="close"
+                    lively:ontimeout:debounce="{$this->getState('timeout')}">
+                    <div class="alert__header">
+                        {$this->getAvatar()}
+                        {$this->getIcon()}
+                        {$this->getTitle()}
+                    </div>
+                    <div class="alert__content">
+                        {$this->getMessage()}
+                    </div>
+                </div>
+            HTML;
         }
-
-        $closeHtml = new Icon([ 'name' => 'cancel' ]);
-    
-        return <<<HTML
-            <div id="{$this->getState('id')}" class="lively-component alert alert-{$this->getState('type')} {$this->getState('class')}" lively:component="{$this->getId()}" role="region" aria-label="Alert">
-                <button class="alert__close" lively:onclick="close" aria-label="Close" type="button">
-                    {$closeHtml}
-                </button>
-                <div class="alert__header">
-                    {$this->getAvatar()}
-                    {$this->getIcon()}
-                    {$this->getTitle()}
-                </div>
-                <div class="alert__content">
-                    {$this->getMessage()}
-                </div>
-            </div>
-        HTML;
+        
+        // Return empty string to remove from DOM
+        return '';
     }
 }
 

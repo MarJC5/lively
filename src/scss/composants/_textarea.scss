@@ -1,12 +1,14 @@
+@use '@/scss/base/variables' as *;
+
 .textarea {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: $component-gap;
     width: 100%;
 
     &__label {
-        font-size: 14px;
+        font-size: $component-font-size;
         color: var(--color-text);
     }
 
@@ -17,21 +19,21 @@
 
     &__field {
         width: 100%;
-        min-height: 80px;
-        padding: 8px 12px;
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius);
+        min-height: calc($component-height * 2);
+        padding: $component-padding;
+        border: $icon-stroke-width solid var(--color-border);
+        border-radius: $component-border-radius;
         background-color: var(--color-background);
         color: var(--color-text);
-        font-size: 14px;
+        font-size: $component-font-size;
         line-height: 1.5;
-        transition: all 0.2s ease;
+        transition: $component-transition;
         resize: vertical;
 
         &:focus {
             outline: none;
             border-color: var(--color-primary);
-            box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.1);
+            box-shadow: $component-shadow rgba(var(--color-primary-rgb), $component-shadow-opacity);
         }
 
         &:disabled {
@@ -47,24 +49,24 @@
 
     &__counter {
         position: absolute;
-        bottom: 8px;
-        right: 12px;
-        font-size: 12px;
+        bottom: $component-padding;
+        right: $component-padding;
+        font-size: $component-font-size-small;
         color: var(--color-text-secondary);
         pointer-events: none;
     }
 
     &__error {
-        font-size: 12px;
+        font-size: $component-font-size-small;
         color: var(--color-error);
-        margin-top: 2px;
+        margin-top: $component-gap;
     }
 
     &--error &__field {
         border-color: var(--color-error);
         
         &:focus {
-            box-shadow: 0 0 0 2px rgba(var(--color-error-rgb), 0.1);
+            box-shadow: $component-shadow rgba(var(--color-error-rgb), $component-shadow-opacity);
         }
     }
 } 

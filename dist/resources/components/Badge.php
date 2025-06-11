@@ -40,6 +40,7 @@ use Lively\Resources\Components\Icon;
 class Badge extends Component {
     protected function initState() {
         $this->setState('label', $this->getProps('label') ?? '');
+        $this->setState('id', $this->getProps('id') ?? uniqid('badge-'));
         $this->setState('class', $this->getProps('class') ?? '');
         $this->setState('icon', $this->getProps('icon') ?? '');
         $this->setState('type', $this->getProps('type') ?? 'default');
@@ -58,7 +59,7 @@ class Badge extends Component {
         }
         
         return <<<HTML
-        <div class="lively-component badge badge-{$this->getState('type')} {$this->getState('class')}" lively:component="{$this->getId()}" role="region" aria-label="Badge">
+        <div id="{$this->getState('id')}" class="lively-component badge badge-{$this->getState('type')} {$this->getState('class')}" lively:component="{$this->getId()}" role="region" aria-label="Badge">
             <span class="badge__label">{$this->getState('label')}</span>
             {$iconHtml}
         </div>

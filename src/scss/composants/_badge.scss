@@ -1,0 +1,68 @@
+@use '@/scss/base/variables' as *;
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: $component-border-radius;
+    font-size: $component-font-size-small;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    transition: $component-transition;
+    max-width: fit-content;
+
+    // Default style
+    background-color: var(--color-background);
+    color: var(--color-text);
+    border: $icon-stroke-width solid var(--color-border);
+
+    // Types
+    &--default {
+        background-color: var(--color-background);
+        color: var(--color-text);
+        border-color: var(--color-border);
+    }
+
+    &--success {
+        background-color: rgba(var(--color-success-rgb), 0.1);
+        color: var(--color-success);
+        border-color: var(--color-success);
+    }
+
+    &--warning {
+        background-color: rgba(var(--color-warning-rgb), 0.1);
+        color: var(--color-warning);
+        border-color: var(--color-warning);
+    }
+
+    &--danger {
+        background-color: rgba(var(--color-error-rgb), 0.1);
+        color: var(--color-error);
+        border-color: var(--color-error);
+    }
+
+    // Icon styles
+    .icon {
+        width: $icon-size;
+        height: $icon-size;
+        stroke-width: $icon-stroke-width;
+    }
+
+    // Label
+    &__label {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    // Hover states
+    &:hover {
+    }
+
+    // Disabled state
+    &--disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+}

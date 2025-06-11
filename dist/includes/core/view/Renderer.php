@@ -181,6 +181,13 @@ class Renderer {
         $state = $component->getState();
         $props = $component->getProps();
         
+        // If HTML is empty, return it as is
+        if (empty(trim($html))) {
+            // delete the component state
+            unset($this->componentStates[$id]);
+            return $html;
+        }
+        
         // Check if the HTML already contains a component attribute
         if (strpos($html, 'lively:component') !== false) {
             // It already has lively:component attribute, just add the component ID

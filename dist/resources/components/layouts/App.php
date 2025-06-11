@@ -10,7 +10,7 @@ use Lively\Core\View\Component;
 class App extends Component {
     protected function initState() {
         $this->setState('class', $this->getProps('class') ?? '');
-        $this->setState('id', $this->getProps('id') ?? 'app');
+        $this->setState('id', $this->getProps('id') ?? uniqid('app-'));
     }
     
     /**

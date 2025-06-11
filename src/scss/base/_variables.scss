@@ -44,3 +44,18 @@ $grid-columns: 3;
 $grid-gap: var(--spacing-4);
 $grid-gap-sm: var(--spacing-2);
 $grid-gap-lg: var(--spacing-6);
+
+// Component Variables
+$component-border-radius: 8px;
+$component-padding: var(--spacing-3);
+$component-height: 40px;
+$component-font-size: 14px;
+$component-font-size-small: 12px;
+$component-gap: var(--spacing-1);
+$component-transition: all 0.2s ease;
+$component-shadow: 0 1px rgb(0 0 0 / 0.05);
+$component-shadow-opacity: 0.1;
+
+// Icon Variables
+$icon-size: 12px;
+$icon-stroke-width: 1px;
