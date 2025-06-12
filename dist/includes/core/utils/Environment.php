@@ -134,6 +134,16 @@ class Environment {
         // Start with default config for current environment
         self::$config = self::$defaultConfig[self::$currentEnvironment];
         
+        // Load app.config.php if it exists
+        $appConfigPath = LIVELY_THEME_DIR . '/app.config.php';
+        if (file_exists($appConfigPath)) {
+            $appConfig = require $appConfigPath;
+            if (is_array($appConfig)) {
+                // Merge app.config.php values into config
+                self::$config = array_merge(self::$config, $appConfig);
+            }
+        }
+        
         // Process configuration in order of priority
         self::loadKnownMappings();
         self::loadAdditionalEnvironmentVariables();
@@ -401,24 +411,30 @@ class Environment {
      * @return mixed
      */
     public static function get($key, $default = null) {
-        // Try direct match
-        if (isset(self::$config[$key])) {
-            return self::$config[$key];
+        // Split the key by dots to handle nested arrays
+        $keys = explode('.', $key);
+        $config = self::$config;
+        
+        // Traverse the config array using the keys
+        foreach ($keys as $k) {
+            // Try direct match first
+            if (isset($config[$k])) {
+                $config = $config[$k];
+                continue;
+            }
+            
+            // Try case-insensitive match
+            $lowercaseKey = strtolower($k);
+            if (isset($config[$lowercaseKey])) {
+                $config = $config[$lowercaseKey];
+                continue;
+            }
+            
+            // If we can't find the key, return default
+            return $default;
         }
         
-        // Try case-insensitive match
-        $lowercaseKey = strtolower($key);
-        if (isset(self::$config[$lowercaseKey])) {
-            return self::$config[$lowercaseKey];
-        }
-        
-        // Try environment variable
-        $value = self::getEnvVar($key) ?? self::getEnvVar(strtoupper($key));
-        if ($value !== null) {
-            return $value;
-        }
-        
-        // Nothing found, return default
-        return $default;
+        // If we got here, we found the value
+        return $config;
     }
 } 

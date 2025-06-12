@@ -36,4 +36,7 @@ return [
         // Number of backup files to keep when rotating logs
         'max_files' => 5,
     ],
+    'upload' => [
+        'max_size' => 1024 * 1024 * 5, // 5MB
+    ],
 ];

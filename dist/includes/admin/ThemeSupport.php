@@ -5,6 +5,8 @@ namespace Lively\Admin;
 // Prevent direct access.
 defined('ABSPATH') or exit;
 
+use Lively\Core\Utils\Environment;
+
 class ThemeSupport
 {
     /**
@@ -28,6 +30,20 @@ class ThemeSupport
 
         // Allow custom uploads
         add_action('init', [__CLASS__, 'allowCustomUploads']);
+
+        // Set the maximum upload size for the site from app.config.php
+        add_action('init', [__CLASS__, 'maxUploadSize']);
+    }
+    
+    /**
+     * Set the maximum upload size for the site from app.config.php
+     *
+     * @return int The maximum upload size in bytes.
+     */
+    public static function maxUploadSize() {
+        add_filter('upload_size_limit', function($size) use ($maxSize) {
+            return Environment::get('upload.max_size');
+        }, 20);
     }
 
     /**
