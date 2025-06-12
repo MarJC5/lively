@@ -1,5 +1,5 @@
 // Libraries
-import '@/js/lib/lively.js';
+import { lively } from '@/js/lib/lively/index.js';
 
 // Hooks
 
