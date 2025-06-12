@@ -1,0 +1,22 @@
+@use '@/scss/base/variables' as *;
+
+.breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: $component-gap;
+
+    &__item {
+        color: var(--color-text-secondary);
+
+        &:last-child {
+            color: var(--color-text);
+        }
+    }
+
+    &__separator {
+        color: var(--color-text-secondary);
+    }
+}

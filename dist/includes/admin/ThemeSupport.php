@@ -41,8 +41,8 @@ class ThemeSupport
      * @return int The maximum upload size in bytes.
      */
     public static function maxUploadSize() {
-        add_filter('upload_size_limit', function($size) use ($maxSize) {
-            return Environment::get('upload.max_size');
+        add_filter('upload_size_limit', function($size) {
+            return Environment::get('upload.max_size', 1024 * 1024 * 10);
         }, 20);
     }
 

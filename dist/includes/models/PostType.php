@@ -176,6 +176,16 @@ abstract class PostType
     }
 
     /**
+     * Get the post type.
+     *
+     * @return string
+     */
+    public static function current(callable $callback)
+    {
+        return $callback(self::get(get_the_ID()));
+    }
+
+    /**
      * Get the meta function for this model.
      *
      * @return callable
