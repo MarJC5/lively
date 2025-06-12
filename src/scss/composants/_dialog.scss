@@ -1,0 +1,74 @@
+@use 'sass:map';
+@use '@/scss/base/variables' as *;
+
+.dialog {
+  position: relative;
+  width: 100%;
+
+  &__wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, $component-overlay-opacity);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: var(--spacing-4);
+  }
+
+  &__modal {
+    background-color: var(--color-background);
+    border-radius: $component-border-radius;
+    box-shadow: $component-shadow;
+    width: 100%;
+    max-width: map-get($container-max-widths, 'sm');
+    max-height: calc(100vh - var(--spacing-8));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  &__header {
+    position: relative;
+    padding: $component-padding;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    margin: 0;
+  }
+
+  &__content {
+    padding: $component-padding;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  &__footer {
+    padding: $component-padding;
+    display: flex;
+    align-items: center;
+    gap: $component-gap;
+  }
+
+  &__close {
+    position: absolute;
+    right: 0;
+    background: none;
+    border: none;
+    padding: var(--spacing-2);
+    cursor: pointer;
+    transition: $component-transition;
+  }
+
+  .btn--trigger {
+    // Inherit button styles from your existing button component
+  }
+}

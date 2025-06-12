@@ -12,6 +12,7 @@
     }
 
     &__title {
+        position: relative;
         margin: 0;
         padding: $component-padding 0;
         font-size: $component-font-size;
@@ -24,6 +25,19 @@
 
         &:hover {
             color: var(--color-primary);
+        }
+
+        &__arrow {
+            position: absolute;
+            right: $component-padding;
+            top: 45%;
+            transform: translateY(-45%) rotate(45deg);
+            width: $icon-size;
+            height: $icon-size;
+            pointer-events: none;
+            border-right: $icon-stroke-width solid var(--color-text);
+            border-bottom: $icon-stroke-width solid var(--color-text);
+            transition: $component-transition;
         }
     }
 
@@ -41,6 +55,11 @@
         .accordion__content {
             max-height: 500px;
             padding: $component-padding 0;
+        }
+
+        .accordion__title__arrow {
+            top: 60%;
+            transform: translateY(-60%) rotate(225deg);
         }
     }
 }

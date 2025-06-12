@@ -75,52 +75,107 @@ class Lively {
         
         // Get element attributes for both formats
         const eventType = e.type; // 'click', 'input', or 'change'
-        const componentId = this.getComponentId(e.target);
         
-        if (!componentId) return;
-        
-        // Check both formats: data-lively-* and lively:*
+        // For click events, we need to check both the target and its parents
+        let targetElement = e.target;
+        let componentId = null;
         let action = null;
         let debounceTimeout = null;
         let actionParams = [];
+        let isDeepClick = false;
         
-        // First check for the shorthand chained format: data-lively-action:click or lively:onclick
-        const shorthandAction = e.target.getAttribute(`lively:on${eventType}`);
-        if (shorthandAction) {
-            // Parse the action and its parameters
-            const actionMatch = shorthandAction.match(/^(\w+)(?:\((.*)\))?$/);
-            if (actionMatch) {
-                action = actionMatch[1];
-                if (actionMatch[2]) {
-                    // Parse parameters, handling both string and non-string values
-                    actionParams = actionMatch[2].split(',').map(param => {
-                        param = param.trim();
-                        // If it's a string (starts and ends with quotes)
-                        if ((param.startsWith("'") && param.endsWith("'")) || 
-                            (param.startsWith('"') && param.endsWith('"'))) {
-                            return param.slice(1, -1); // Remove quotes
+        // For click events, walk up the DOM tree to find the first element with a click handler
+        if (eventType === 'click') {
+            while (targetElement && targetElement !== document.body) {
+                componentId = this.getComponentId(targetElement);
+                if (componentId) {
+                    // Check for deep click handler first
+                    const deepAction = targetElement.getAttribute(`lively:on${eventType}:deep`);
+                    if (deepAction) {
+                        // For deep clicks, allow clicks to propagate through children
+                        const actionMatch = deepAction.match(/^(\w+)(?:\((.*)\))?$/);
+                        if (actionMatch) {
+                            action = actionMatch[1];
+                            if (actionMatch[2]) {
+                                actionParams = this.parseActionParams(actionMatch[2]);
+                            }
+                            isDeepClick = true;
+                            break;
                         }
-                        // Try to parse as number
-                        const num = Number(param);
-                        if (!isNaN(num)) return num;
-                        // Try to parse as boolean
-                        if (param === 'true') return true;
-                        if (param === 'false') return false;
-                        // Return as is if none of the above
-                        return param;
-                    });
+                    }
+                    
+                    // Check for regular click handler
+                    const shorthandAction = targetElement.getAttribute(`lively:on${eventType}`);
+                    if (shorthandAction) {
+                        // For buttons, treat as deep by default unless explicitly specified as non-deep
+                        const isButton = targetElement.tagName === 'BUTTON';
+                        const isExplicitlyNonDeep = targetElement.hasAttribute(`lively:on${eventType}:shallow`);
+                        
+                        // Only check for direct click if it's not a button or explicitly marked as shallow
+                        if (!isButton || isExplicitlyNonDeep) {
+                            if (e.target === targetElement) {
+                                const actionMatch = shorthandAction.match(/^(\w+)(?:\((.*)\))?$/);
+                                if (actionMatch) {
+                                    action = actionMatch[1];
+                                    if (actionMatch[2]) {
+                                        actionParams = this.parseActionParams(actionMatch[2]);
+                                    }
+                                    // Check for debounce with colon syntax: lively:onchange:300
+                                    const attrParts = targetElement.getAttribute(`lively:on${eventType}:debounce`);
+                                    if (attrParts) {
+                                        debounceTimeout = parseInt(attrParts) || this.config.debounceTimeout;
+                                    }
+                                    break; // Found a click handler, stop searching
+                                }
+                            }
+                        } else {
+                            // For buttons, treat as deep by default
+                            const actionMatch = shorthandAction.match(/^(\w+)(?:\((.*)\))?$/);
+                            if (actionMatch) {
+                                action = actionMatch[1];
+                                if (actionMatch[2]) {
+                                    actionParams = this.parseActionParams(actionMatch[2]);
+                                }
+                                // Check for debounce with colon syntax: lively:onchange:300
+                                const attrParts = targetElement.getAttribute(`lively:on${eventType}:debounce`);
+                                if (attrParts) {
+                                    debounceTimeout = parseInt(attrParts) || this.config.debounceTimeout;
+                                }
+                                break; // Found a click handler, stop searching
+                            }
+                        }
+                    }
                 }
+                targetElement = targetElement.parentElement;
             }
-            // Check for debounce with colon syntax: lively:onchange:300
-            const attrParts = e.target.getAttribute(`lively:on${eventType}:debounce`);
-            if (attrParts) {
-                debounceTimeout = parseInt(attrParts) || this.config.debounceTimeout;
+        } else {
+            // For non-click events, use the original target element
+            componentId = this.getComponentId(targetElement);
+            if (componentId) {
+                // Check both formats: data-lively-* and lively:*
+                const shorthandAction = targetElement.getAttribute(`lively:on${eventType}`);
+                if (shorthandAction) {
+                    const actionMatch = shorthandAction.match(/^(\w+)(?:\((.*)\))?$/);
+                    if (actionMatch) {
+                        action = actionMatch[1];
+                        if (actionMatch[2]) {
+                            actionParams = this.parseActionParams(actionMatch[2]);
+                        }
+                        // Check for debounce with colon syntax: lively:onchange:300
+                        const attrParts = targetElement.getAttribute(`lively:on${eventType}:debounce`);
+                        if (attrParts) {
+                            debounceTimeout = parseInt(attrParts) || this.config.debounceTimeout;
+                        }
+                    }
+                }
             }
         }
         
+        if (!componentId) return;
+        
         // Check for legacy format with potential chaining: data-lively-action:click
         if (!action) {
-            const legacyAttr = e.target.getAttribute('data-lively-action');
+            const legacyAttr = targetElement.getAttribute('data-lively-action');
             if (legacyAttr) {
                 // Check if it has event type chained with colon
                 const legacyParts = legacyAttr.split(':');
@@ -136,13 +191,13 @@ class Lively {
                 } 
                 // Check for separate event type attribute
                 else {
-                    const targetEventType = e.target.getAttribute('data-lively-event') || 'click';
+                    const targetEventType = targetElement.getAttribute('data-lively-event') || 'click';
                     if (targetEventType === eventType) {
                         action = legacyAttr;
                         // Check for separate debounce attribute
-                        const hasDebounce = e.target.hasAttribute('data-lively-debounce');
+                        const hasDebounce = targetElement.hasAttribute('data-lively-debounce');
                         if (hasDebounce) {
-                            debounceTimeout = parseInt(e.target.getAttribute('data-lively-debounce-timeout')) || 
+                            debounceTimeout = parseInt(targetElement.getAttribute('data-lively-debounce-timeout')) || 
                                              this.config.debounceTimeout;
                         }
                     }
@@ -156,15 +211,15 @@ class Lively {
         // For input/change events, look for value attribute in both formats
         let valueAttr = null;
         if (eventType === 'input' || eventType === 'change') {
-            valueAttr = e.target.getAttribute('data-lively-value-attr') || 
-                        e.target.getAttribute('lively:value-attr') || 
+            valueAttr = targetElement.getAttribute('data-lively-value-attr') || 
+                        targetElement.getAttribute('lively:value-attr') || 
                         'value';
         }
         
         // Create arguments for the action
         const args = {};
         if (valueAttr && (eventType === 'input' || eventType === 'change')) {
-            args[valueAttr] = e.target.value;
+            args[valueAttr] = targetElement.value;
         }
         
         // Add parsed parameters to args
@@ -189,6 +244,26 @@ class Lively {
         } else {
             this.updateComponent(componentId, action, args);
         }
+    }
+    
+    // Helper method to parse action parameters
+    parseActionParams(paramsString) {
+        return paramsString.split(',').map(param => {
+            param = param.trim();
+            // If it's a string (starts and ends with quotes)
+            if ((param.startsWith("'") && param.endsWith("'")) || 
+                (param.startsWith('"') && param.endsWith('"'))) {
+                return param.slice(1, -1); // Remove quotes
+            }
+            // Try to parse as number
+            const num = Number(param);
+            if (!isNaN(num)) return num;
+            // Try to parse as boolean
+            if (param === 'true') return true;
+            if (param === 'false') return false;
+            // Return as is if none of the above
+            return param;
+        });
     }
     
     // Helper to get component ID from element

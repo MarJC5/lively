@@ -52,9 +52,10 @@ $component-height: 40px;
 $component-font-size: 14px;
 $component-font-size-small: 12px;
 $component-gap: var(--spacing-1);
-$component-transition: all 0.2s ease;
+$component-transition: all 0.3s ease-in-out;
 $component-shadow: 0 1px rgb(0 0 0 / 0.05);
 $component-shadow-opacity: 0.1;
+$component-overlay-opacity: 0.5;
 
 // Icon Variables
 $icon-size: 12px;

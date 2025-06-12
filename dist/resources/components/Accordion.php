@@ -117,6 +117,7 @@ class Accordion extends Component {
             <div class="accordion__item" data-open="{$isOpen}">
                 <h3 class="accordion__title" id="{$itemId}-title" lively:onclick="toggleOpenItem('{$escapedTitle}')">
                     {$escapedTitle}
+                    <span class="accordion__title__arrow"></span>
                 </h3>
                 <div class="accordion__content" id="{$itemId}-content" role="region" aria-labelledby="{$itemId}-title">
                     {$item['content']}
