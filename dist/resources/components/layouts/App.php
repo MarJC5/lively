@@ -8,6 +8,11 @@ use Lively\Core\View\Component;
  * @view
  */
 class App extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('class', $this->getProps('class') ?? '');
         $this->setState('id', $this->getProps('id') ?? uniqid('app-'));

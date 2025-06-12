@@ -58,6 +58,11 @@ use Lively\Core\View\Component;
  * @view
  */
 class Input extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('label', $this->getProps('label') ?? '');
         $this->setState('type', $this->getProps('type') ?? 'text');

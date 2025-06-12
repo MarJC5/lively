@@ -36,6 +36,11 @@ use Lively\Resources\Components\Image;
  * @view
  */
 class Avatar extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('media', $this->getProps('media'));
         $this->setState('size', $this->getProps('size') ?? 64);

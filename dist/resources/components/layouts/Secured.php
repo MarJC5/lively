@@ -28,10 +28,20 @@ use Lively\Core\View\Component;
  * @view
  */
 class Secured extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('children', $this->getProps('children') ?? '');
     }
 
+    /**
+     * Check if the user is logged in
+     * 
+     * @return bool
+     */
     protected function isUserLoggedIn() {
         if (is_user_logged_in()) {
             return true;
@@ -40,6 +50,11 @@ class Secured extends Component {
         return false;
     }
     
+    /**
+     * Render the component
+     * 
+     * @return string The rendered HTML
+     */
     public function render() {
         $content = $this->isUserLoggedIn() ? $this->getState('children') : '';
         

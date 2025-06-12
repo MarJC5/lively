@@ -42,6 +42,11 @@ use Lively\Core\View\Component;
  * @view
  */
 class Card extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('id', $this->getProps('id') ?? uniqid('card-'));
         $this->setState('class', $this->getProps('class') ?? '');
@@ -50,6 +55,11 @@ class Card extends Component {
         $this->setState('footer', $this->getProps('footer'));
     }
     
+    /**
+     * Render the card component
+     * 
+     * @return string The rendered HTML
+     */
     public function render() {
         $header = $this->getState('header') ? '<div class="card__header">' . $this->getState('header') . '</div>' : '';
         $footer = $this->getState('footer') ? '<div class="card__footer">' . $this->getState('footer') . '</div>' : '';

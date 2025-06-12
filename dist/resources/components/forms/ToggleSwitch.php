@@ -42,7 +42,9 @@ use Lively\Core\View\Component;
 class ToggleSwitch extends Component
 {
     /**
-     * Initialize the component state with default values
+     * Initialize the component state
+     * 
+     * @return void
      */
     protected function initState()
     {

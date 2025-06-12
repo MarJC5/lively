@@ -55,6 +55,11 @@ use Lively\Core\View\Component;
  * @view
  */
 class Container extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('id', $this->getProps('id') ?? uniqid('container-'));
         $this->setState('class', $this->getProps('class') ?? '');

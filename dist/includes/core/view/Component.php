@@ -53,6 +53,8 @@ abstract class Component {
         // Register with renderer immediately
         $renderer = Renderer::getInstance();
         $renderer->registerComponent($this);
+
+        $this->registerHooks();
         
         // Check if lazy loading is explicitly set in props
         if (isset($props['lazy']) && $props['lazy'] === true) {
@@ -64,6 +66,15 @@ abstract class Component {
             'class' => get_class($this),
             'state' => $this->state
         ]);
+    }
+
+    /**
+     * Register hooks for the component
+     * 
+     * @return void
+     */
+    protected function registerHooks() {
+        // Implement in child classes if needed
     }
     
     /**

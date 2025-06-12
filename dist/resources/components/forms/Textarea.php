@@ -61,6 +61,11 @@ use Lively\Core\View\Component;
  * @view
  */
 class Textarea extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('label', $this->getProps('label') ?? '');
         $this->setState('name', $this->getProps('name') ?? '');

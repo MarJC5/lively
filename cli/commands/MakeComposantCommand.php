@@ -64,10 +64,29 @@ use Lively\Core\View\Component;
  * @view
  */
 class {$name} extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         // Initialize your component state here
     }
+
+    /**
+     * Register hooks for the component
+     * 
+     * @return void
+     */
+    protected function registerHooks() {
+        // Implement hooks here
+    }
     
+    /**
+     * Render the component
+     * 
+     * @return string The rendered HTML
+     */
     public function render() {
         return <<<HTML
         <div class="lively-component" lively:component="{\$this->getId()}" role="region" aria-label="{$name}">

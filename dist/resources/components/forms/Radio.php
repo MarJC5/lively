@@ -49,6 +49,11 @@ use Lively\Core\View\Component;
  * @view
  */
 class Radio extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('label', $this->getProps('label') ?? '');
         $this->setState('description', $this->getProps('description') ?? '');

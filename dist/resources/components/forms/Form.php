@@ -50,6 +50,11 @@ use Lively\Resources\Components\Icon;
  * @view
  */
 class Form extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('id', $this->getProps('id') ?? 'form');
         $this->setState('class', $this->getProps('class') ?? '');

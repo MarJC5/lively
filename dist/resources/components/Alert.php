@@ -5,6 +5,7 @@ namespace Lively\Resources\Components;
 use Lively\Core\View\Component;
 use Lively\Resources\Components\Icon;
 use Lively\Resources\Components\Avatar;
+use Lively\Core\WordPress\Hooks;
 
 /**
  * Alert Component
@@ -63,6 +64,11 @@ use Lively\Resources\Components\Avatar;
  */
 class Alert extends Component
 {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState()
     {
         $this->setState('type', $this->getProps('type') ?? 'info');
@@ -75,6 +81,17 @@ class Alert extends Component
         $this->setState('position', $this->getProps('position') ?? 'bottom-right');
         $this->setState('timeout', $this->getProps('timeout') ?? 3000);
         $this->setState('isOpen', $this->getProps('isOpen') ?? true);
+    }
+
+    /**
+     * Register hooks for the component
+     * 
+     * @return void
+     */
+    protected function registerHooks() {
+        Hooks::mounted($this->getId(), function() {
+            error_log('mounted ' . $this->getId());
+        });
     }
 
     /**

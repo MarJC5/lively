@@ -43,6 +43,11 @@ use Lively\Core\View\Component;
  * @view
  */
 class OTP extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('length', $this->getProps('length') ?? 6);
         $this->setState('value', $this->getProps('value') ?? array_fill(0, 6, ''));

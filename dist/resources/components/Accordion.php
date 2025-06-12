@@ -66,6 +66,11 @@ use Lively\Core\View\Component;
  * @view
  */
 class Accordion extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('openItems', []);
         $this->setState('id', $this->getProps('id') ?? uniqid('accordion-'));
@@ -97,6 +102,11 @@ class Accordion extends Component {
         $this->setState('openItems', $openItems);
     }
 
+    /**
+     * Get the items for the accordion
+     * 
+     * @return string The rendered HTML
+     */
     protected function getItems() {
         $items = array_map(function($item, $index) {
             $isOpen = in_array($item['title'], $this->getState('openItems'));

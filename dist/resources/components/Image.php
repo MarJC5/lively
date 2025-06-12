@@ -69,6 +69,8 @@ class Image extends Component
 {
     /**
      * Initialize the component state
+     * 
+     * @return void
      */
     protected function initState()
     {

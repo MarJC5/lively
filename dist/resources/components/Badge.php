@@ -38,6 +38,11 @@ use Lively\Resources\Components\Icon;
  * @view
  */
 class Badge extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('label', $this->getProps('label') ?? '');
         $this->setState('id', $this->getProps('id') ?? uniqid('badge-'));

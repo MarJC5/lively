@@ -2,6 +2,8 @@
 
 namespace Lively\Core\View\Traits;
 
+use Lively\Core\WordPress\Hooks;
+
 /**
  * Trait for component lifecycle methods
  */
@@ -21,6 +23,12 @@ trait LifecycleTrait
         // Update lifecycle status
         $this->lifecycleStatus = 'mounting';
         
+        // Add WordPress integration
+        if (defined('ABSPATH')) {
+            Hooks::doAction('lively_component_before_mount', $this);
+            Hooks::doAction("lively_component_{$this->id}_before_mount", $this);
+        }
+        
         // Implement in child classes if needed
     }
     
@@ -33,6 +41,12 @@ trait LifecycleTrait
     public function mounted() {
         // Update lifecycle status
         $this->lifecycleStatus = 'mounted';
+        
+        // Add WordPress integration
+        if (defined('ABSPATH')) {
+            Hooks::doAction('lively_component_mounted', $this);
+            Hooks::doAction("lively_component_{$this->id}_mounted", $this);
+        }
         
         // Implement in child classes if needed
     }
@@ -47,6 +61,12 @@ trait LifecycleTrait
         // Update lifecycle status
         $this->lifecycleStatus = 'updating';
         
+        // Add WordPress integration
+        if (defined('ABSPATH')) {
+            Hooks::doAction('lively_component_before_update', $this);
+            Hooks::doAction("lively_component_{$this->id}_before_update", $this);
+        }
+        
         // Implement in child classes if needed
     }
     
@@ -59,6 +79,12 @@ trait LifecycleTrait
     public function updated() {
         // Update lifecycle status
         $this->lifecycleStatus = 'updated';
+        
+        // Add WordPress integration
+        if (defined('ABSPATH')) {
+            Hooks::doAction('lively_component_updated', $this);
+            Hooks::doAction("lively_component_{$this->id}_updated", $this);
+        }
         
         // Implement in child classes if needed
     }
@@ -73,6 +99,12 @@ trait LifecycleTrait
         // Update lifecycle status
         $this->lifecycleStatus = 'unmounting';
         
+        // Add WordPress integration
+        if (defined('ABSPATH')) {
+            Hooks::doAction('lively_component_before_unmount', $this);
+            Hooks::doAction("lively_component_{$this->id}_before_unmount", $this);
+        }
+        
         // Implement in child classes if needed
     }
     
@@ -85,6 +117,12 @@ trait LifecycleTrait
     public function unmounted() {
         // Update lifecycle status
         $this->lifecycleStatus = 'unmounted';
+        
+        // Add WordPress integration
+        if (defined('ABSPATH')) {
+            Hooks::doAction('lively_component_unmounted', $this);
+            Hooks::doAction("lively_component_{$this->id}_unmounted", $this);
+        }
         
         // Implement in child classes if needed
     }
@@ -120,6 +158,16 @@ trait LifecycleTrait
     public function mount() {
         // Only mount if not already mounted
         if ($this->lifecycleStatus !== 'mounted' && $this->lifecycleStatus !== 'mounting') {
+            // Ensure we're in a WordPress context
+            if (defined('ABSPATH') && !Hooks::didAction('wp_loaded')) {
+                // Queue the mount for after WordPress is fully loaded
+                Hooks::addAction('wp_loaded', function() {
+                    $this->beforeMount();
+                    $this->mounted();
+                });
+                return $this;
+            }
+            
             // Call beforeMount lifecycle hook
             $this->beforeMount();
             

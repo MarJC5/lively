@@ -45,6 +45,11 @@ use Lively\Core\View\Component;
  * @view
  */
 class Progress extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('value', $this->getProps('value') ?? 0);
         $this->setState('min', $this->getProps('min') ?? 0);

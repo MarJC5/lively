@@ -56,6 +56,11 @@ use Lively\Core\View\Component;
  * @view
  */
 class Pagination extends Component {
+    /**
+     * Initialize the component state
+     * 
+     * @return void
+     */
     protected function initState() {
         $this->setState('currentPage', $this->getProps('currentPage') ?? 1);
         $this->setState('lastPage', $this->getProps('lastPage') ?? 1);
